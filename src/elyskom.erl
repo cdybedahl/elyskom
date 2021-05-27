@@ -1,4 +1,4 @@
--module(dummy).
+-module(elyskom).
 
 -behaviour(gen_statem).
 

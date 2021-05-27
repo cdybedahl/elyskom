@@ -1,16 +1,16 @@
 %%%-------------------------------------------------------------------
-%% @doc dummy public API
+%% @doc elyskom public API
 %% @end
 %%%-------------------------------------------------------------------
 
--module(dummy_app).
+-module(elyskom_app).
 
 -behaviour(application).
 
 -export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    dummy_sup:start_link().
+    elyskom_sup:start_link().
 
 stop(_State) ->
     ok.

@@ -1,8 +1,8 @@
-{application, dummy, [
+{application, elyskom, [
     {description, "An OTP application"},
     {vsn, "0.1.0"},
     {registered, []},
-    {mod, {dummy_app, []}},
+    {mod, {elyskom_app, []}},
     {applications, [
         kernel,
         stdlib

@@ -1,9 +1,9 @@
 %%%-------------------------------------------------------------------
-%% @doc dummy top level supervisor.
+%% @doc elyskom top level supervisor.
 %% @end
 %%%-------------------------------------------------------------------
 
--module(dummy_sup).
+-module(elyskom_sup).
 
 -behaviour(supervisor).
 
@@ -29,7 +29,7 @@ init([]) ->
         #{strategy => one_for_all,
           intensity => 0,
           period => 1},
-    ChildSpecs = [#{id => dummy1, start => {dummy, start_link, []}}],
+    ChildSpecs = [#{id => elyskom1, start => {elyskom, start_link, []}}],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions
