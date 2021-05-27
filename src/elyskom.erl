@@ -9,7 +9,11 @@
 -export([handshake/3]).
 -export([waiting/3]).
 
--define(INITIAL_STATE, #{delay => 1, port => undef}).
+-define(INITIAL_STATE,
+        #{delay => 1,
+          port => undef,
+          acc => <<>>,
+          tokens => []}).
 
 callback_mode() ->
     state_functions.
@@ -38,6 +42,15 @@ handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port} = State) ->
     inet:setopts(Port, [{active, once}]),
     {next_state, waiting, State}.
 
+waiting(info, {tcp, Port, Payload}, #{port := Port}) ->
+    case Payload of
+        <<":", Rest/binary>> ->
+            io:format("Async: ~p~n", [Rest]);
+        Other ->
+            io:format("Other: ~p~n", [Other])
+    end,
+    inet:setopts(Port, [{active, once}]),
+    keep_state_and_data;
 waiting(Type, Content, Data) ->
     io:format("~p ~p ~p~n", [Type, Content, Data]),
     keep_state_and_data.
