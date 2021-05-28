@@ -12,7 +12,8 @@
 -define(INITIAL_STATE,
         #{delay => 1,
           port => undef,
-          acc => <<>>,
+          stream_acc => <<>>,
+          token_acc => <<>>,
           tokens => []}).
 
 callback_mode() ->
