@@ -80,7 +80,7 @@ token(internal, tokenize, Data) ->
             NewData1 = maps:put(token_acc, <<>>, Data),
             NewData2 = maps:put(tokens, [], NewData1),
             {next_state,
-             message,
+             waiting,
              maps:put(stream_acc, Rest, NewData2),
              [{next_event, internal, tokenize}]};
         <<Char:8, Rest/binary>> ->
