@@ -121,7 +121,7 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
             <<Hollerith:Length/binary, Rest/binary>> = Stream,
             NewData0 = maps:put(token_acc, Hollerith, Data),
             NewData1 = maps:put(stream_acc, Rest, NewData0),
-            {keep_state, NewData1, [{next_event, internal, tokenize}]}
+            {next_state, tokenize, NewData1, [{next_event, internal, tokenize}]}
     end;
 hollerith(Type, Content, Data) ->
     io:format("hollerith: ~p ~p ~p~n", [Type, Content, Data]),
@@ -182,5 +182,11 @@ message_end_test() ->
                    token_acc => <<>>,
                    messages => [[start, <<"5">>, <<"17">>, <<"23">>]]},
                  DataOut1).
+
+hollerith_test() ->
+    DataIn = #{stream_acc => <<"Foobar\n">>, tokens => [], token_acc => <<"6">>, messages => []},
+    {keep_state, DataOut1} = hollerith(internal, tokenize, DataIn),
+    {next_state, tokenize, DataOut2, _Actions} = hollerith(internal, tokenize, DataOut1),
+    ?assertEqual(<<"Foobar">>, maps:get(token_acc, DataOut2)).
 
 -endif.
