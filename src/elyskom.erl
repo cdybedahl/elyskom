@@ -46,12 +46,17 @@ handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port} = Data) ->
 
 waiting(info, {tcp, Port, Payload}, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
+    NewData = append_to_stream(Payload, Data),
+    {keep_state, NewData, [{next_event, internal, tokenize}]};
+waiting(internal, tokenize, #{stream_acc := <<>>}) ->
+    keep_state_and_data;
+waiting(internal, tokenize, #{stream_acc := Payload} = Data) ->
     case Payload of
         <<":", Rest/binary>> ->
             io:format("Async: ~p~n", [Rest]),
             {next_state,
              token,
-             append_to_stream(Rest, add_token(async, Data)),
+             add_token(async, maps:put(stream_acc, Rest, Data)),
              [{next_event, internal, tokenize}]};
         Other ->
             io:format("Other: ~p~n", [Other]),
