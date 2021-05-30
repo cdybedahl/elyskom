@@ -9,6 +9,7 @@
 -export([handshake/3]).
 -export([waiting/3]).
 -export([token/3]).
+-export([hollerith/3]).
 
 -define(INITIAL_DATA,
         #{delay => 1,
@@ -89,6 +90,11 @@ token(internal, tokenize, Data) ->
              waiting,
              maps:put(stream_acc, Rest, NewData2),
              [{next_event, internal, tokenize}]};
+        <<$H, Rest/binary>> ->
+            {next_state,
+             hollerith,
+             maps:put(stream_acc, Rest, Data),
+             [{next_event, internal, tokenize}]};
         <<Char:8, Rest/binary>> ->
             NewData1 = maps:put(token_acc, <<(maps:get(token_acc, Data))/binary, Char>>, Data),
             {next_state,
@@ -98,6 +104,27 @@ token(internal, tokenize, Data) ->
     end;
 token(Type, Content, Data) ->
     io:format("token: ~p ~p ~p~n", [Type, Content, Data]),
+    keep_state_and_data.
+
+hollerith(info, {tcp, Port, Payload}, #{port := Port} = Data) ->
+    inet:setopts(Port, [{active, once}]),
+    NewData = append_to_stream(Payload, Data),
+    {keep_state, NewData, [{next_event, internal, tokenize}]};
+hollerith(internal, tokenize, #{token_acc := Prefix} = Data) when is_binary(Prefix) ->
+    {keep_state, maps:put(token_acc, binary_to_integer(Prefix), Data)};
+hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Data)
+    when is_integer(Length) ->
+    case byte_size(Stream) >= Length of
+        false ->
+            keep_state_and_data;
+        true ->
+            <<Hollerith:Length/binary, Rest/binary>> = Stream,
+            NewData0 = maps:put(token_acc, Hollerith, Data),
+            NewData1 = maps:put(stream_acc, Rest, NewData0),
+            {keep_state, NewData1, [{next_event, internal, tokenize}]}
+    end;
+hollerith(Type, Content, Data) ->
+    io:format("hollerith: ~p ~p ~p~n", [Type, Content, Data]),
     keep_state_and_data.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
