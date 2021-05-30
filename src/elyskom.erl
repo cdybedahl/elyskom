@@ -9,11 +9,11 @@
 -export([handshake/3]).
 -export([waiting/3]).
 -export([token/3]).
--export([message/3]).
 
 -define(INITIAL_DATA,
         #{delay => 1,
           port => undef,
+          messages => [],
           stream_acc => <<>>,
           token_acc => <<>>,
           tokens => []}).
@@ -75,9 +75,10 @@ token(internal, tokenize, Data) ->
              maps:put(stream_acc, Rest, NewData2),
              [{next_event, internal, tokenize}]};
         <<10, Rest/binary>> ->
-            io:format("Message: ~p~n",
-                      [lists:reverse([maps:get(token_acc, Data) | maps:get(tokens, Data)])]),
-            NewData1 = maps:put(token_acc, <<>>, Data),
+            Message = lists:reverse([maps:get(token_acc, Data) | maps:get(tokens, Data)]),
+            io:format("Message: ~p~n", [Message]),
+            NewData0 = maps:put(messages, [Message | maps:get(messages, Data)], Data),
+            NewData1 = maps:put(token_acc, <<>>, NewData0),
             NewData2 = maps:put(tokens, [], NewData1),
             {next_state,
              waiting,
@@ -92,10 +93,6 @@ token(internal, tokenize, Data) ->
     end;
 token(Type, Content, Data) ->
     io:format("token: ~p ~p ~p~n", [Type, Content, Data]),
-    keep_state_and_data.
-
-message(Type, Content, Data) ->
-    io:format("message: ~p ~p ~p~n", [Type, Content, Data]),
     keep_state_and_data.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,10 +124,31 @@ tokenize_test() ->
         #{stream_acc => <<"5 17 23\n">>,
           tokens => [start],
           token_acc => <<>>},
-    {next_state, token, DataOut, _Actions} = token(internal, tokenize, DataIn),
+
+    {next_state, token, DataOut1, _Actions1} = token(internal, tokenize, DataIn),
     ?assertEqual(#{stream_acc => <<" 17 23\n">>,
                    tokens => [start],
                    token_acc => <<"5">>},
-                 DataOut).
+                 DataOut1),
+
+    {next_state, token, DataOut2, _Actions2} = token(internal, tokenize, DataOut1),
+    ?assertEqual(#{stream_acc => <<"17 23\n">>,
+                   tokens => [<<"5">>, start],
+                   token_acc => <<>>},
+                 DataOut2).
+
+message_end_test() ->
+    DataIn =
+        #{stream_acc => <<"\n">>,
+          tokens => [<<"17">>, <<"5">>, start],
+          token_acc => <<"23">>,
+          messages => []},
+
+    {next_state, waiting, DataOut1, _Actions1} = token(internal, tokenize, DataIn),
+    ?assertEqual(#{stream_acc => <<>>,
+                   tokens => [],
+                   token_acc => <<>>,
+                   messages => [[start, <<"5">>, <<"17">>, <<"23">>]]},
+                 DataOut1).
 
 -endif.
