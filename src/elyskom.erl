@@ -67,14 +67,14 @@ token(internal, tokenize, Data) ->
     Stream = maps:get(stream_acc, Data),
     %% TODO: Handle holleriths
     case Stream of
-        <<' ', Rest/binary>> ->
+        <<32, Rest/binary>> ->
             NewData1 = add_token(maps:get(token_acc, Data), Data),
             NewData2 = maps:put(token_acc, <<>>, NewData1),
             {next_state,
-             message,
+             token,
              maps:put(stream_acc, Rest, NewData2),
              [{next_event, internal, tokenize}]};
-        <<'\n', Rest/binary>> ->
+        <<10, Rest/binary>> ->
             io:format("Message: ~p~n",
                       [lists:reverse([maps:get(token_acc, Data) | maps:get(tokens, Data)])]),
             NewData1 = maps:put(token_acc, <<>>, Data),
@@ -84,9 +84,9 @@ token(internal, tokenize, Data) ->
              maps:put(stream_acc, Rest, NewData2),
              [{next_event, internal, tokenize}]};
         <<Char:8, Rest/binary>> ->
-            NewData1 = maps:put(token_acc, <<(maps:get(token_acc, Data)), Char>>, Data),
+            NewData1 = maps:put(token_acc, <<(maps:get(token_acc, Data))/binary, Char>>, Data),
             {next_state,
-             message,
+             token,
              maps:put(stream_acc, Rest, NewData1),
              [{next_event, internal, tokenize}]}
     end;
@@ -100,8 +100,37 @@ message(Type, Content, Data) ->
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Help functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 add_token(Token, Map) ->
     maps:put(tokens, [Token | maps:get(tokens, Map)], Map).
 
 append_to_stream(Data, Map) ->
     maps:put(stream_acc, <<(maps:get(stream_acc, Map))/binary, Data/binary>>, Map).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Tests
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+-ifdef(TEST).
+
+-include_lib("eunit/include/eunit.hrl").
+
+basic_test() ->
+    ?assert(true).
+
+token_stop_test() ->
+    ?assertEqual(keep_state_and_data, token(internal, tokenize, #{stream_acc => <<>>})).
+
+tokenize_test() ->
+    DataIn =
+        #{stream_acc => <<"5 17 23\n">>,
+          tokens => [start],
+          token_acc => <<>>},
+    {next_state, token, DataOut, _Actions} = token(internal, tokenize, DataIn),
+    ?assertEqual(#{stream_acc => <<" 17 23\n">>,
+                   tokens => [start],
+                   token_acc => <<"5">>},
+                 DataOut).
+
+-endif.
