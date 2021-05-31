@@ -1,0 +1,1518 @@
+# This protocol-a.txt, generated from Protocol-A.texi
+# by checkargs.py.  This file contains the definitions
+# of the types, requests and asynchronous messages in a
+# format that is intended to be machine-readable and
+# stable.  All names have a numbered suffix which is
+# the protocol version in which the entity was first
+# introduced.
+
+# This file is Copyright (C) 1995-2003 Lysator ACS.
+# All rights reserved.  This file may only be used
+# for testing purposes.  Once the file format has
+# stabilized a future version of the file will probably
+# be placed in the public domain.
+
+# This file only contains the recommended stuff.
+
+# Part 1: Define the alias names that Protocol-A.texi
+# uses.  These aliases will change from time to time, as
+# new versions which are believed to be better are
+# introduced.  It might be best not to use the aliases
+# in generated code.
+
+%PROTOEDITION 11.1
+%PROTOVER 11
+%LYSKOMDVERSION 2.1.2
+
+
+# Types.
+%type-alias Any-Conf-Type-1                Any-Conf-Type
+%type-alias Aux-Item-10                    Aux-Item
+%type-alias Aux-Item-Flags-10              Aux-Item-Flags
+%type-alias Aux-Item-Input-10              Aux-Item-Input
+%type-alias Aux-No-10                      Aux-No
+%type-alias Conf-No-1                      Conf-No
+%type-alias Conf-Type-1                    Conf-Type
+%type-alias Conf-Z-Info-7                  Conf-Z-Info
+%type-alias Conference-10                  Conference
+%type-alias Dynamic-Session-Info-9         Dynamic-Session-Info
+%type-alias Extended-Conf-Type-1           Extended-Conf-Type
+%type-alias Garb-Nice-1                    Garb-Nice
+%type-alias Info-10                        Info
+%type-alias Info-1                         Info-Old
+%type-alias Info-Type-1                    Info-Type
+%type-alias Local-Text-No-1                Local-Text-No
+%type-alias Local-To-Global-Block-10       Local-To-Global-Block
+%type-alias Mark-1                         Mark
+%type-alias Member-10                      Member
+%type-alias Membership-11                  Membership
+%type-alias Membership-Type-10             Membership-Type
+%type-alias Misc-Info-1                    Misc-Info
+%type-alias Pers-No-1                      Pers-No
+%type-alias Person-1                       Person
+%type-alias Personal-Flags-1               Personal-Flags
+%type-alias Priv-Bits-1                    Priv-Bits
+%type-alias Read-Range-11                  Read-Range
+%type-alias Session-Flags-9                Session-Flags
+%type-alias Session-No-1                   Session-No
+%type-alias Static-Server-Info-11          Static-Server-Info
+%type-alias Static-Session-Info-9          Static-Session-Info
+%type-alias Stats-11                       Stats
+%type-alias Stats-Description-11           Stats-Description
+%type-alias Text-List-1                    Text-List
+%type-alias Text-Mapping-10                Text-Mapping
+%type-alias Text-No-1                      Text-No
+%type-alias Text-Number-Pair-10            Text-Number-Pair
+%type-alias Text-Stat-10                   Text-Stat
+%type-alias Time-1                         Time
+%type-alias UConference-8                  UConference
+%type-alias Version-Info-7                 Version-Info
+%type-alias Who-Info-1                     Who-Info
+
+# Requests.
+%request-alias accept-async-9                 accept-async
+%request-alias add-comment-1                  add-comment
+%request-alias add-footnote-1                 add-footnote
+%request-alias add-member-10                  add-member
+%request-alias add-recipient-1                add-recipient
+%request-alias change-conference-1            change-conference
+%request-alias change-name-1                  change-name
+%request-alias change-what-i-am-doing-1       change-what-i-am-doing
+%request-alias create-anonymous-text-10       create-anonymous-text
+%request-alias create-conf-10                 create-conf
+%request-alias create-person-10               create-person
+%request-alias create-text-10                 create-text
+%request-alias delete-conf-1                  delete-conf
+%request-alias delete-text-1                  delete-text
+%request-alias disconnect-1                   disconnect
+%request-alias enable-1                       enable
+%request-alias find-next-conf-no-11           find-next-conf-no
+%request-alias find-next-text-no-3            find-next-text-no
+%request-alias find-previous-conf-no-11       find-previous-conf-no
+%request-alias find-previous-text-no-3        find-previous-text-no
+%request-alias first-unused-conf-no-11        first-unused-conf-no
+%request-alias first-unused-text-no-11        first-unused-text-no
+%request-alias get-boottime-info-11           get-boottime-info
+%request-alias get-client-name-6              get-client-name
+%request-alias get-client-version-6           get-client-version
+%request-alias get-collate-table-10           get-collate-table
+%request-alias get-conf-stat-10               get-conf-stat
+%request-alias get-info-10                    get-info
+%request-alias get-last-text-3                get-last-text
+%request-alias get-marks-1                    get-marks
+%request-alias get-members-10                 get-members
+%request-alias get-membership-11              get-membership
+%request-alias get-person-stat-1              get-person-stat
+%request-alias get-static-session-info-9      get-static-session-info
+%request-alias get-stats-11                   get-stats
+%request-alias get-stats-description-11       get-stats-description
+%request-alias get-text-1                     get-text
+%request-alias get-text-stat-10               get-text-stat
+%request-alias get-time-1                     get-time
+%request-alias get-uconf-stat-8               get-uconf-stat
+%request-alias get-unread-confs-1             get-unread-confs
+%request-alias get-version-info-7             get-version-info
+%request-alias local-to-global-10             local-to-global
+%request-alias local-to-global-reverse-11     local-to-global-reverse
+%request-alias login-4                        login
+%request-alias logout-1                       logout
+%request-alias lookup-z-name-7                lookup-z-name
+%request-alias map-created-texts-10           map-created-texts
+%request-alias map-created-texts-reverse-11   map-created-texts-reverse
+%request-alias mark-as-read-1                 mark-as-read
+%request-alias mark-as-unread-11              mark-as-unread
+%request-alias mark-text-4                    mark-text
+%request-alias modify-conf-info-10            modify-conf-info
+%request-alias modify-system-info-10          modify-system-info
+%request-alias modify-text-info-10            modify-text-info
+%request-alias query-async-9                  query-async
+%request-alias query-predefined-aux-items-10  query-predefined-aux-items
+%request-alias query-read-texts-11            query-read-texts
+%request-alias re-z-lookup-7                  re-z-lookup
+%request-alias send-message-1                 send-message
+%request-alias set-client-version-6           set-client-version
+%request-alias set-conf-type-1                set-conf-type
+%request-alias set-connection-time-format-11  set-connection-time-format
+%request-alias set-etc-motd-1                 set-etc-motd
+%request-alias set-garb-nice-1                set-garb-nice
+%request-alias set-info-9                     set-info
+%request-alias set-keep-commented-10          set-keep-commented
+%request-alias set-last-read-8                set-last-read
+%request-alias set-membership-type-10         set-membership-type
+%request-alias set-motd-of-lyskom-1           set-motd-of-lyskom
+%request-alias set-passwd-1                   set-passwd
+%request-alias set-permitted-submitters-1     set-permitted-submitters
+%request-alias set-pers-flags-10              set-pers-flags
+%request-alias set-presentation-1             set-presentation
+%request-alias set-priv-bits-1                set-priv-bits
+%request-alias set-read-ranges-11             set-read-ranges
+%request-alias set-super-conf-1               set-super-conf
+%request-alias set-supervisor-1               set-supervisor
+%request-alias set-unread-1                   set-unread
+%request-alias set-user-area-2                set-user-area
+%request-alias shutdown-kom-1                 shutdown-kom
+%request-alias sub-comment-1                  sub-comment
+%request-alias sub-footnote-1                 sub-footnote
+%request-alias sub-member-1                   sub-member
+%request-alias sub-recipient-1                sub-recipient
+%request-alias sync-kom-1                     sync-kom
+%request-alias unmark-text-6                  unmark-text
+%request-alias user-active-9                  user-active
+%request-alias who-am-i-1                     who-am-i
+%request-alias who-is-on-dynamic-9            who-is-on-dynamic
+
+# Asynchronous messages.
+%async-alias async-deleted-text-10          async-deleted-text
+%async-alias async-i-am-on-1                async-i-am-on
+%async-alias async-leave-conf-1             async-leave-conf
+%async-alias async-login-1                  async-login
+%async-alias async-logout-1                 async-logout
+%async-alias async-new-membership-10        async-new-membership
+%async-alias async-new-motd-11              async-new-motd
+%async-alias async-new-name-1               async-new-name
+%async-alias async-new-presentation-11      async-new-presentation
+%async-alias async-new-recipient-10         async-new-recipient
+%async-alias async-new-text-10              async-new-text
+%async-alias async-new-user-area-11         async-new-user-area
+%async-alias async-rejected-connection-1    async-rejected-connection
+%async-alias async-send-message-1           async-send-message
+%async-alias async-sub-recipient-10         async-sub-recipient
+%async-alias async-sync-db-1                async-sync-db
+%async-alias async-text-aux-changed-11      async-text-aux-changed
+
+# Part two: all derived types.
+
+Any-Conf-Type-1 ::= Conf-Type-1 | Extended-Conf-Type-1
+Aux-Item-10 ::=
+      ( aux-no               : Aux-No-10;
+        tag                  : INT32;
+        creator              : Pers-No-1;
+        created-at           : Time-1;
+        flags                : Aux-Item-Flags-10;
+        inherit-limit        : INT32;
+        data                 : HOLLERITH;
+      )
+Aux-Item-Flags-10 ::= BITSTRING
+      ( deleted;
+        inherit;
+        secret;
+        hide-creator;
+        dont-garb;
+        reserved2;
+        reserved3;
+        reserved4;
+      )
+Aux-Item-Input-10 ::=
+      ( tag                  : INT32;
+        flags                : Aux-Item-Flags-10;
+        inherit-limit        : INT32;
+        data                 : HOLLERITH;
+      )
+Aux-No-10 ::= INT32
+Conf-No-1 ::= INT16
+Conf-Type-1 ::= BITSTRING
+      ( rd-prot;
+        original;
+        secret;
+        letterbox;
+      )
+Conf-Z-Info-7 ::=
+      ( name                 : HOLLERITH;
+        type                 : Conf-Type-1;
+        conf-no              : Conf-No-1;
+      )
+Conference-10 ::=
+      ( name                 : HOLLERITH;
+        type                 : Extended-Conf-Type-1;
+        creation-time        : Time-1;
+        last-written         : Time-1;
+        creator              : Pers-No-1;
+        presentation         : Text-No-1;
+        supervisor           : Conf-No-1;
+        permitted-submitters : Conf-No-1;
+        super-conf           : Conf-No-1;
+        msg-of-day           : Text-No-1;
+        nice                 : Garb-Nice-1;
+        keep-commented       : Garb-Nice-1;
+        no-of-members        : INT16;
+        first-local-no       : Local-Text-No-1;
+        no-of-texts          : INT32;
+        expire               : Garb-Nice-1;
+        aux-items            : ARRAY Aux-Item-10;
+      )
+Dynamic-Session-Info-9 ::=
+      ( session              : Session-No-1;
+        person               : Pers-No-1;
+        working-conference   : Conf-No-1;
+        idle-time            : INT32;
+        flags                : Session-Flags-9;
+        what-am-i-doing      : HOLLERITH;
+      )
+Extended-Conf-Type-1 ::= BITSTRING
+      ( rd-prot;
+        original;
+        secret;
+        letterbox;
+        allow-anonymous;
+        forbid-secret;
+        reserved2;
+        reserved3;
+      )
+Garb-Nice-1 ::= INT32
+Info-1 ::=
+      ( version              : INT32;
+        conf-pres-conf       : Conf-No-1;
+        pers-pres-conf       : Conf-No-1;
+        motd-conf            : Conf-No-1;
+        kom-news-conf        : Conf-No-1;
+        motd-of-lyskom       : Text-No-1;
+      )
+Info-10 ::=
+      ( version              : INT32;
+        conf-pres-conf       : Conf-No-1;
+        pers-pres-conf       : Conf-No-1;
+        motd-conf            : Conf-No-1;
+        kom-news-conf        : Conf-No-1;
+        motd-of-lyskom       : Text-No-1;
+        aux-item-list        : ARRAY Aux-Item-10;
+      )
+Info-Type-1 ::= ENUMERATION-OF(Misc-Info-1)
+Local-Text-No-1 ::= INT32
+Local-To-Global-Block-10 ::= SELECTION
+      (  0=sparse     sparse-block         : ARRAY Text-Number-Pair-10;
+         1=dense      dense-block          : Text-List-1;
+      )
+Mark-1 ::=
+      ( text-no              : Text-No-1;
+        type                 : INT8;
+      )
+Member-10 ::=
+      ( member               : Pers-No-1;
+        added-by             : Pers-No-1;
+        added-at             : Time-1;
+        type                 : Membership-Type-10;
+      )
+Membership-11 ::=
+      ( position             : INT32;
+        last-time-read       : Time-1;
+        conference           : Conf-No-1;
+        priority             : INT8;
+        read-ranges          : ARRAY Read-Range-11;
+        added-by             : Pers-No-1;
+        added-at             : Time-1;
+        type                 : Membership-Type-10;
+      )
+Membership-Type-10 ::= BITSTRING
+      ( invitation;
+        passive;
+        secret;
+        passive-message-invert;
+        reserved2;
+        reserved3;
+        reserved4;
+        reserved5;
+      )
+Misc-Info-1 ::= SELECTION
+      (  0=recpt      recipient            : Conf-No-1;
+         1=cc-recpt   cc-recipient         : Conf-No-1;
+         2=comm-to    comment-to           : Text-No-1;
+         3=comm-in    commented-in         : Text-No-1;
+         4=footn-to   footnote-to          : Text-No-1;
+         5=footn-in   footnoted-in         : Text-No-1;
+         6=loc-no     local-no             : Local-Text-No-1;
+         7=rec-time   received-at          : Time-1;
+         8=sent-by    sender               : Pers-No-1;
+         9=sent-at    sent-at              : Time-1;
+        15=bcc-recpt  bcc-recipient        : Conf-No-1;
+      )
+Pers-No-1 ::= Conf-No-1
+Person-1 ::=
+      ( username             : HOLLERITH;
+        privileges           : Priv-Bits-1;
+        flags                : Personal-Flags-1;
+        last-login           : Time-1;
+        user-area            : Text-No-1;
+        total-time-present   : INT32;
+        sessions             : INT32;
+        created-lines        : INT32;
+        created-bytes        : INT32;
+        read-texts           : INT32;
+        no-of-text-fetches   : INT32;
+        created-persons      : INT16;
+        created-confs        : INT16;
+        first-created-local-no : INT32;
+        no-of-created-texts  : INT32;
+        no-of-marks          : INT16;
+        no-of-confs          : INT16;
+      )
+Personal-Flags-1 ::= BITSTRING
+      ( unread-is-secret;
+        flg2;
+        flg3;
+        flg4;
+        flg5;
+        flg6;
+        flg7;
+        flg8;
+      )
+Priv-Bits-1 ::= BITSTRING
+      ( wheel;
+        admin;
+        statistic;
+        create-pers;
+        create-conf;
+        change-name;
+        flg7;
+        flg8;
+        flg9;
+        flg10;
+        flg11;
+        flg12;
+        flg13;
+        flg14;
+        flg15;
+        flg16;
+      )
+Read-Range-11 ::=
+      ( first-read           : Local-Text-No-1;
+        last-read            : Local-Text-No-1;
+      )
+Session-Flags-9 ::= BITSTRING
+      ( invisible;
+        user-active-used;
+        user-absent;
+        reserved3;
+        reserved4;
+        reserved5;
+        reserved6;
+        reserved7;
+      )
+Session-No-1 ::= INT32
+Static-Server-Info-11 ::=
+      ( boot-time            : Time-1;
+        save-time            : Time-1;
+        db-status            : HOLLERITH;
+        existing-texts       : INT32;
+        highest-text-no      : Text-No-1;
+        existing-confs       : INT32;
+        existing-persons     : INT32;
+        highest-conf-no      : Conf-No-1;
+      )
+Static-Session-Info-9 ::=
+      ( username             : HOLLERITH;
+        hostname             : HOLLERITH;
+        ident-user           : HOLLERITH;
+        connection-time      : Time-1;
+      )
+Stats-11 ::=
+      ( average              : FLOAT;
+        ascent-rate          : FLOAT;
+        descent-rate         : FLOAT;
+      )
+Stats-Description-11 ::=
+      ( what                 : ARRAY HOLLERITH;
+        when                 : ARRAY INT32;
+      )
+Text-List-1 ::=
+      ( first-local-no       : Local-Text-No-1;
+        texts                : ARRAY Text-No-1;
+      )
+Text-Mapping-10 ::=
+      ( range-begin          : Local-Text-No-1;
+        range-end            : Local-Text-No-1;
+        more-texts-exists    : BOOL;
+        block                : Local-To-Global-Block-10;
+      )
+Text-No-1 ::= INT32
+Text-Number-Pair-10 ::=
+      ( local-number         : Local-Text-No-1;
+        global-number        : Text-No-1;
+      )
+Text-Stat-10 ::=
+      ( creation-time        : Time-1;
+        author               : Pers-No-1;
+        no-of-lines          : INT32;
+        no-of-chars          : INT32;
+        no-of-marks          : INT16;
+        misc-info            : ARRAY Misc-Info-1;
+        aux-items            : ARRAY Aux-Item-10;
+      )
+Time-1 ::=
+      ( seconds              : INT32;
+        minutes              : INT32;
+        hours                : INT32;
+        day                  : INT32;
+        month                : INT32;
+        year                 : INT32;
+        day-of-week          : INT32;
+        day-of-year          : INT32;
+        is-dst               : BOOL;
+      )
+UConference-8 ::=
+      ( name                 : HOLLERITH;
+        type                 : Extended-Conf-Type-1;
+        highest-local-no     : Local-Text-No-1;
+        nice                 : Garb-Nice-1;
+      )
+Version-Info-7 ::=
+      ( protocol-version     : INT32;
+        server-software      : HOLLERITH;
+        software-version     : HOLLERITH;
+      )
+Who-Info-1 ::=
+      ( person               : Pers-No-1;
+        working-conference   : Conf-No-1;
+        session              : Session-No-1;
+        what-am-i-doing      : HOLLERITH;
+        username             : HOLLERITH;
+      )
+
+# Part three: all requests types.
+
+%Request: 80
+    %Name: accept-async-9
+    %Protocol version: 9
+    %Status: Recommended
+%End Request
+
+accept-async-9 [80] ( request-list : ARRAY INT32 )
+    -> (  );
+
+%Request: 32
+    %Name: add-comment-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+add-comment-1 [32] (( text-no    : Text-No-1;
+                      comment-to : Text-No-1 ))
+    -> (  );
+
+%Request: 37
+    %Name: add-footnote-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+add-footnote-1 [37] (( text-no    : Text-No-1;
+                       footnote-to : Text-No-1 ))
+    -> (  );
+
+%Request: 100
+    %Name: add-member-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+add-member-10 [100] (( conf-no    : Conf-No-1;
+                       pers-no    : Pers-No-1;
+                       priority   : INT8;
+                       where      : INT16;
+                       type       : Membership-Type-10 ))
+    -> (  );
+
+%Request: 30
+    %Name: add-recipient-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+add-recipient-1 [30] (( text-no    : Text-No-1;
+                        conf-no    : Conf-No-1;
+                        recpt-type : Info-Type-1 ))
+    -> (  );
+
+%Request: 2
+    %Name: change-conference-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+change-conference-1 [2] ( conference : Conf-No )
+    -> (  );
+
+%Request: 3
+    %Name: change-name-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+change-name-1 [3] (( conference : Conf-No-1;
+                     new-name   : HOLLERITH ))
+    -> (  );
+
+%Request: 4
+    %Name: change-what-i-am-doing-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+change-what-i-am-doing-1 [4] ( what-am-i-doing : HOLLERITH )
+    -> (  );
+
+%Request: 87
+    %Name: create-anonymous-text-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+create-anonymous-text-10 [87] (( text       : HOLLERITH;
+                                 misc-info  : ARRAY Misc-Info-1;
+                                 aux-items  : ARRAY Aux-Item-Input-10 ))
+    -> ( Text-No-1 );
+
+%Request: 88
+    %Name: create-conf-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+create-conf-10 [88] (( name       : HOLLERITH;
+                       type       : Any-Conf-Type-1;
+                       aux-items  : ARRAY Aux-Item-Input-10 ))
+    -> ( Conf-No-1 );
+
+%Request: 89
+    %Name: create-person-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+create-person-10 [89] (( name       : HOLLERITH;
+                         passwd     : HOLLERITH;
+                         flags      : Personal-Flags-1;
+                         aux-items  : ARRAY Aux-Item-Input-10 ))
+    -> ( Pers-No-1 );
+
+%Request: 86
+    %Name: create-text-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+create-text-10 [86] (( text       : HOLLERITH;
+                       misc-info  : ARRAY Misc-Info-1;
+                       aux-items  : ARRAY Aux-Item-Input-10 ))
+    -> ( Text-No-1 );
+
+%Request: 11
+    %Name: delete-conf-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+delete-conf-1 [11] ( conf : Conf-No )
+    -> (  );
+
+%Request: 29
+    %Name: delete-text-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+delete-text-1 [29] ( text : Text-No )
+    -> (  );
+
+%Request: 55
+    %Name: disconnect-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+disconnect-1 [55] ( session-no : Session-No )
+    -> (  );
+
+%Request: 42
+    %Name: enable-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+enable-1 [42] ( level : INT8 )
+    -> (  );
+
+%Request: 116
+    %Name: find-next-conf-no-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+find-next-conf-no-11 [116] ( start : Conf-No )
+    -> ( Conf-No-1 );
+
+%Request: 60
+    %Name: find-next-text-no-3
+    %Protocol version: 3
+    %Status: Recommended
+%End Request
+
+find-next-text-no-3 [60] ( start : Text-No )
+    -> ( Text-No-1 );
+
+%Request: 117
+    %Name: find-previous-conf-no-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+find-previous-conf-no-11 [117] ( start : Conf-No )
+    -> ( Conf-No-1 );
+
+%Request: 61
+    %Name: find-previous-text-no-3
+    %Protocol version: 3
+    %Status: Recommended
+%End Request
+
+find-previous-text-no-3 [61] ( start : Text-No )
+    -> ( Text-No-1 );
+
+%Request: 114
+    %Name: first-unused-conf-no-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+first-unused-conf-no-11 [114] ( )
+    -> ( Conf-No-1 );
+
+%Request: 115
+    %Name: first-unused-text-no-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+first-unused-text-no-11 [115] ( )
+    -> ( Text-No-1 );
+
+%Request: 113
+    %Name: get-boottime-info-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+get-boottime-info-11 [113] ( )
+    -> ( Static-Server-Info-11 );
+
+%Request: 70
+    %Name: get-client-name-6
+    %Protocol version: 6
+    %Status: Recommended
+%End Request
+
+get-client-name-6 [70] ( session : Session-No )
+    -> ( HOLLERITH );
+
+%Request: 71
+    %Name: get-client-version-6
+    %Protocol version: 6
+    %Status: Recommended
+%End Request
+
+get-client-version-6 [71] ( session : Session-No )
+    -> ( HOLLERITH );
+
+%Request: 85
+    %Name: get-collate-table-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+get-collate-table-10 [85] ( )
+    -> ( HOLLERITH );
+
+%Request: 91
+    %Name: get-conf-stat-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+get-conf-stat-10 [91] ( conf-no : Conf-No )
+    -> ( Conference-10 );
+
+%Request: 94
+    %Name: get-info-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+get-info-10 [94] ( )
+    -> ( Info-10 );
+
+%Request: 58
+    %Name: get-last-text-3
+    %Protocol version: 3
+    %Status: Recommended
+%End Request
+
+get-last-text-3 [58] ( before : Time )
+    -> ( Text-No-1 );
+
+%Request: 23
+    %Name: get-marks-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+get-marks-1 [23] ( )
+    -> ( ARRAY Mark-1 );
+
+%Request: 101
+    %Name: get-members-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+get-members-10 [101] (( conf       : Conf-No-1;
+                        first      : INT16;
+                        no-of-members : INT16 ))
+    -> ( ARRAY Member-10 );
+
+%Request: 108
+    %Name: get-membership-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+get-membership-11 [108] (( person     : Pers-No-1;
+                           first      : INT16;
+                           no-of-confs : INT16;
+                           want-read-ranges : BOOL;
+                           max-ranges : INT32 ))
+    -> ( ARRAY Membership-11 );
+
+%Request: 49
+    %Name: get-person-stat-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+get-person-stat-1 [49] ( pers-no : Pers-No )
+    -> ( Person-1 );
+
+%Request: 84
+    %Name: get-static-session-info-9
+    %Protocol version: 9
+    %Status: Recommended
+%End Request
+
+get-static-session-info-9 [84] ( session-no : Session-No )
+    -> ( Static-Session-Info-9 );
+
+%Request: 112
+    %Name: get-stats-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+get-stats-11 [112] ( what : HOLLERITH )
+    -> ( ARRAY Stats-11 );
+
+%Request: 111
+    %Name: get-stats-description-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+get-stats-description-11 [111] ( )
+    -> ( Stats-Description-11 );
+
+%Request: 25
+    %Name: get-text-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+get-text-1 [25] (( text       : Text-No-1;
+                   start-char : INT32;
+                   end-char   : INT32 ))
+    -> ( HOLLERITH );
+
+%Request: 90
+    %Name: get-text-stat-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+get-text-stat-10 [90] ( text-no : Text-No )
+    -> ( Text-Stat-10 );
+
+%Request: 35
+    %Name: get-time-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+get-time-1 [35] ( )
+    -> ( Time-1 );
+
+%Request: 78
+    %Name: get-uconf-stat-8
+    %Protocol version: 8
+    %Status: Recommended
+%End Request
+
+get-uconf-stat-8 [78] ( conference : Conf-No )
+    -> ( UConference-8 );
+
+%Request: 52
+    %Name: get-unread-confs-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+get-unread-confs-1 [52] ( pers-no : Pers-No )
+    -> ( ARRAY Conf-No-1 );
+
+%Request: 75
+    %Name: get-version-info-7
+    %Protocol version: 7
+    %Status: Recommended
+%End Request
+
+get-version-info-7 [75] ( )
+    -> ( Version-Info-7 );
+
+%Request: 103
+    %Name: local-to-global-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+local-to-global-10 [103] (( conf-no    : Conf-No-1;
+                            first-local-no : Local-Text-No-1;
+                            no-of-existing-texts : INT32 ))
+    -> ( Text-Mapping-10 );
+
+%Request: 121
+    %Name: local-to-global-reverse-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+local-to-global-reverse-11 [121] (( conf-no    : Conf-No-1;
+                                    local-no-ceiling : Local-Text-No-1;
+                                    no-of-existing-texts : INT32 ))
+    -> ( Text-Mapping-10 );
+
+%Request: 62
+    %Name: login-4
+    %Protocol version: 4
+    %Status: Recommended
+%End Request
+
+login-4 [62] (( person     : Pers-No-1;
+                passwd     : HOLLERITH;
+                invisible  : BOOL ))
+    -> (  );
+
+%Request: 1
+    %Name: logout-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+logout-1 [1] ( )
+    -> (  );
+
+%Request: 76
+    %Name: lookup-z-name-7
+    %Protocol version: 7
+    %Status: Recommended
+%End Request
+
+lookup-z-name-7 [76] (( name       : HOLLERITH;
+                        want-pers  : BOOL;
+                        want-confs : BOOL ))
+    -> ( ARRAY Conf-Z-Info-7 );
+
+%Request: 104
+    %Name: map-created-texts-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+map-created-texts-10 [104] (( author     : Pers-No-1;
+                              first-local-no : Local-Text-No-1;
+                              no-of-existing-texts : INT32 ))
+    -> ( Text-Mapping-10 );
+
+%Request: 122
+    %Name: map-created-texts-reverse-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+map-created-texts-reverse-11 [122] (( author     : Pers-No-1;
+                                      local-no-ceiling : Local-Text-No-1;
+                                      no-of-existing-texts : INT32 ))
+    -> ( Text-Mapping-10 );
+
+%Request: 27
+    %Name: mark-as-read-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+mark-as-read-1 [27] (( conference : Conf-No-1;
+                       text       : ARRAY Local-Text-No-1 ))
+    -> (  );
+
+%Request: 109
+    %Name: mark-as-unread-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+mark-as-unread-11 [109] (( conference : Conf-No-1;
+                           text       : Local-Text-No-1 ))
+    -> (  );
+
+%Request: 72
+    %Name: mark-text-4
+    %Protocol version: 4
+    %Status: Recommended
+%End Request
+
+mark-text-4 [72] (( text       : Text-No-1;
+                    mark-type  : INT8 ))
+    -> (  );
+
+%Request: 93
+    %Name: modify-conf-info-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+modify-conf-info-10 [93] (( conf       : Conf-No-1;
+                            delete     : ARRAY Aux-No-10;
+                            add        : ARRAY Aux-Item-Input-10 ))
+    -> (  );
+
+%Request: 95
+    %Name: modify-system-info-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+modify-system-info-10 [95] (( items-to-delete : ARRAY Aux-No-10;
+                              items-to-add : ARRAY Aux-Item-Input-10 ))
+    -> (  );
+
+%Request: 92
+    %Name: modify-text-info-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+modify-text-info-10 [92] (( text       : Text-No-1;
+                            delete     : ARRAY Aux-No-10;
+                            add        : ARRAY Aux-Item-Input-10 ))
+    -> (  );
+
+%Request: 81
+    %Name: query-async-9
+    %Protocol version: 9
+    %Status: Recommended
+%End Request
+
+query-async-9 [81] ( )
+    -> ( ARRAY INT32 );
+
+%Request: 96
+    %Name: query-predefined-aux-items-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+query-predefined-aux-items-10 [96] ( )
+    -> ( ARRAY INT32 );
+
+%Request: 107
+    %Name: query-read-texts-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+query-read-texts-11 [107] (( person     : Pers-No-1;
+                             conference : Conf-No-1;
+                             want-read-ranges : BOOL;
+                             max-ranges : INT32 ))
+    -> ( Membership-11 );
+
+%Request: 74
+    %Name: re-z-lookup-7
+    %Protocol version: 7
+    %Status: Recommended
+%End Request
+
+re-z-lookup-7 [74] (( regexp     : HOLLERITH;
+                      want-persons : BOOL;
+                      want-confs : BOOL ))
+    -> ( ARRAY Conf-Z-Info-7 );
+
+%Request: 53
+    %Name: send-message-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+send-message-1 [53] (( recipient  : Conf-No-1;
+                       message    : HOLLERITH ))
+    -> (  );
+
+%Request: 69
+    %Name: set-client-version-6
+    %Protocol version: 6
+    %Status: Recommended
+%End Request
+
+set-client-version-6 [69] (( client-name : HOLLERITH;
+                             client-version : HOLLERITH ))
+    -> (  );
+
+%Request: 21
+    %Name: set-conf-type-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-conf-type-1 [21] (( conf-no    : Conf-No-1;
+                        type       : Any-Conf-Type-1 ))
+    -> (  );
+
+%Request: 120
+    %Name: set-connection-time-format-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+set-connection-time-format-11 [120] ( use-utc : BOOL )
+    -> (  );
+
+%Request: 17
+    %Name: set-etc-motd-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-etc-motd-1 [17] (( conf-no    : Conf-No-1;
+                       text-no    : Text-No-1 ))
+    -> (  );
+
+%Request: 22
+    %Name: set-garb-nice-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-garb-nice-1 [22] (( conf-no    : Conf-No-1;
+                        nice       : Garb-Nice-1 ))
+    -> (  );
+
+%Request: 79
+    %Name: set-info-9
+    %Protocol version: 9
+    %Status: Recommended
+%End Request
+
+set-info-9 [79] ( info : Info-Old )
+    -> (  );
+
+%Request: 105
+    %Name: set-keep-commented-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+set-keep-commented-10 [105] (( conf-no    : Conf-No-1;
+                               keep-commented : Garb-Nice-1 ))
+    -> (  );
+
+%Request: 77
+    %Name: set-last-read-8
+    %Protocol version: 8
+    %Status: Recommended
+%End Request
+
+set-last-read-8 [77] (( conference : Conf-No-1;
+                        last-read  : Local-Text-No-1 ))
+    -> (  );
+
+%Request: 102
+    %Name: set-membership-type-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+set-membership-type-10 [102] (( pers       : Pers-No-1;
+                                conf       : Conf-No-1;
+                                type       : Membership-Type-10 ))
+    -> (  );
+
+%Request: 41
+    %Name: set-motd-of-lyskom-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-motd-of-lyskom-1 [41] ( text-no : Text-No )
+    -> (  );
+
+%Request: 8
+    %Name: set-passwd-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-passwd-1 [8] (( person     : Pers-No-1;
+                    old-pwd    : HOLLERITH;
+                    new-pwd    : HOLLERITH ))
+    -> (  );
+
+%Request: 19
+    %Name: set-permitted-submitters-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-permitted-submitters-1 [19] (( conf-no    : Conf-No-1;
+                                   perm-sub   : Conf-No-1 ))
+    -> (  );
+
+%Request: 106
+    %Name: set-pers-flags-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Request
+
+set-pers-flags-10 [106] (( pers-no    : Pers-No-1;
+                           flags      : Personal-Flags-1 ))
+    -> (  );
+
+%Request: 16
+    %Name: set-presentation-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-presentation-1 [16] (( conf-no    : Conf-No-1;
+                           text-no    : Text-No-1 ))
+    -> (  );
+
+%Request: 7
+    %Name: set-priv-bits-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-priv-bits-1 [7] (( person     : Pers-No-1;
+                       privileges : Priv-Bits-1 ))
+    -> (  );
+
+%Request: 110
+    %Name: set-read-ranges-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Request
+
+set-read-ranges-11 [110] (( conference : Conf-No-1;
+                            read-ranges : ARRAY Read-Range-11 ))
+    -> (  );
+
+%Request: 20
+    %Name: set-super-conf-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-super-conf-1 [20] (( conf-no    : Conf-No-1;
+                         super-conf : Conf-No-1 ))
+    -> (  );
+
+%Request: 18
+    %Name: set-supervisor-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-supervisor-1 [18] (( conf-no    : Conf-No-1;
+                         admin      : Conf-No-1 ))
+    -> (  );
+
+%Request: 40
+    %Name: set-unread-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+set-unread-1 [40] (( conf-no    : Conf-No-1;
+                     no-of-unread : INT32 ))
+    -> (  );
+
+%Request: 57
+    %Name: set-user-area-2
+    %Protocol version: 2
+    %Status: Recommended
+%End Request
+
+set-user-area-2 [57] (( pers-no    : Pers-No-1;
+                        user-area  : Text-No-1 ))
+    -> (  );
+
+%Request: 44
+    %Name: shutdown-kom-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+shutdown-kom-1 [44] ( exit-val : INT8 )
+    -> (  );
+
+%Request: 33
+    %Name: sub-comment-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+sub-comment-1 [33] (( text-no    : Text-No-1;
+                      comment-to : Text-No-1 ))
+    -> (  );
+
+%Request: 38
+    %Name: sub-footnote-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+sub-footnote-1 [38] (( text-no    : Text-No-1;
+                       footnote-to : Text-No-1 ))
+    -> (  );
+
+%Request: 15
+    %Name: sub-member-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+sub-member-1 [15] (( conf-no    : Conf-No-1;
+                     pers-no    : Pers-No-1 ))
+    -> (  );
+
+%Request: 31
+    %Name: sub-recipient-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+sub-recipient-1 [31] (( text-no    : Text-No-1;
+                        conf-no    : Conf-No-1 ))
+    -> (  );
+
+%Request: 43
+    %Name: sync-kom-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+sync-kom-1 [43] ( )
+    -> (  );
+
+%Request: 73
+    %Name: unmark-text-6
+    %Protocol version: 6
+    %Status: Recommended
+%End Request
+
+unmark-text-6 [73] ( text-no : Text-No )
+    -> (  );
+
+%Request: 82
+    %Name: user-active-9
+    %Protocol version: 9
+    %Status: Recommended
+%End Request
+
+user-active-9 [82] ( )
+    -> (  );
+
+%Request: 56
+    %Name: who-am-i-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Request
+
+who-am-i-1 [56] ( )
+    -> ( Session-No-1 );
+
+%Request: 83
+    %Name: who-is-on-dynamic-9
+    %Protocol version: 9
+    %Status: Recommended
+%End Request
+
+who-is-on-dynamic-9 [83] (( want-visible : BOOL;
+                            want-invisible : BOOL;
+                            active-last : INT32 ))
+    -> ( ARRAY Dynamic-Session-Info-9 );
+
+
+# Part four: all asynchronous messages.
+
+%Async: 14
+    %Async-Name: async-deleted-text-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Async
+
+async-deleted-text-10 [14] (( text-no    : Text-No-1;
+                              text-stat  : Text-Stat-10 ))
+
+%Async: 6
+    %Async-Name: async-i-am-on-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-i-am-on-1 [6] ( info : Who-Info )
+
+%Async: 8
+    %Async-Name: async-leave-conf-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-leave-conf-1 [8] ( conf-no : Conf-No )
+
+%Async: 9
+    %Async-Name: async-login-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-login-1 [9] (( pers-no    : Pers-No-1;
+                     session-no : Session-No-1 ))
+
+%Async: 13
+    %Async-Name: async-logout-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-logout-1 [13] (( pers-no    : Pers-No-1;
+                       session-no : Session-No-1 ))
+
+%Async: 18
+    %Async-Name: async-new-membership-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Async
+
+async-new-membership-10 [18] (( pers-no    : Pers-No-1;
+                                conf-no    : Conf-No-1 ))
+
+%Async: 21
+    %Async-Name: async-new-motd-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Async
+
+async-new-motd-11 [21] (( conf-no    : Conf-No-1;
+                          old-motd   : Text-No-1;
+                          new-motd   : Text-No-1 ))
+
+%Async: 5
+    %Async-Name: async-new-name-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-new-name-1 [5] (( conf-no    : Conf-No-1;
+                        old-name   : HOLLERITH;
+                        new-name   : HOLLERITH ))
+
+%Async: 20
+    %Async-Name: async-new-presentation-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Async
+
+async-new-presentation-11 [20] (( conf-no    : Conf-No-1;
+                                  old-presentation : Text-No-1;
+                                  new-presentation : Text-No-1 ))
+
+%Async: 16
+    %Async-Name: async-new-recipient-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Async
+
+async-new-recipient-10 [16] (( text-no    : Text-No-1;
+                               conf-no    : Conf-No-1;
+                               type       : Info-Type-1 ))
+
+%Async: 15
+    %Async-Name: async-new-text-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Async
+
+async-new-text-10 [15] (( text-no    : Text-No-1;
+                          text-stat  : Text-Stat-10 ))
+
+%Async: 19
+    %Async-Name: async-new-user-area-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Async
+
+async-new-user-area-11 [19] (( pers-no    : Pers-No-1;
+                               old-user-area : Text-No-1;
+                               new-user-area : Text-No-1 ))
+
+%Async: 11
+    %Async-Name: async-rejected-connection-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-rejected-connection-1 [11] ( )
+
+%Async: 12
+    %Async-Name: async-send-message-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-send-message-1 [12] (( recipient  : Conf-No-1;
+                             sender     : Pers-No-1;
+                             message    : HOLLERITH ))
+
+%Async: 17
+    %Async-Name: async-sub-recipient-10
+    %Protocol version: 10
+    %Status: Recommended
+%End Async
+
+async-sub-recipient-10 [17] (( text-no    : Text-No-1;
+                               conf-no    : Conf-No-1;
+                               type       : Info-Type-1 ))
+
+%Async: 7
+    %Async-Name: async-sync-db-1
+    %Protocol version: 1
+    %Status: Recommended
+%End Async
+
+async-sync-db-1 [7] ( )
+
+%Async: 22
+    %Async-Name: async-text-aux-changed-11
+    %Protocol version: 11
+    %Status: Recommended
+%End Async
+
+async-text-aux-changed-11 [22] (( text-no    : Text-No-1;
+                                  deleted    : ARRAY Aux-Item-10;
+                                  added      : ARRAY Aux-Item-10 ))
+

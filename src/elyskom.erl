@@ -28,17 +28,16 @@ start_link() ->
 init(_Args) ->
     {ok, connecting, ?INITIAL_DATA, [{next_event, internal, startup}]}.
 
-connecting(_Type, startup, Data) ->
+connecting(_Type, startup, #{delay := Delay} = Data) ->
     case gen_tcp:connect("kom.lysator.liu.se", 4894, [binary, inet, {active, once}]) of
         {ok, Port} ->
             io:format("Connected.~n"),
             gen_tcp:send(Port, <<"A5Hcalle\n">>),
-            {next_state, handshake, maps:put(port, Port, Data)};
+            {next_state, handshake, Data#{port := Port}};
         _ ->
-            Delay = maps:get(delay, Data),
             NewDelay = erlang:min(300, 2 * Delay),
             io:format("Connecting failed. Delaying ~p seconds.~n", [Delay]),
-            {keep_state, maps:put(delay, NewDelay, Data), [{timeout, Delay * 1000, startup}]}
+            {keep_state, Data#{delay := NewDelay}, [{timeout, Delay * 1000, startup}]}
     end.
 
 handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port} = Data) ->
@@ -57,8 +56,20 @@ waiting(internal, tokenize, #{stream_acc := Payload} = Data) ->
             io:format("Async: ~p~n", [Rest]),
             {next_state,
              token,
-             add_token(async, maps:put(stream_acc, Rest, Data)),
+             add_token(async, Data#{stream_acc := Rest}),
              [{next_event, internal, tokenize}]};
+        <<"=", Rest/binary>> ->
+            io:format("Response: ~p~n", [Rest]),
+            {next_state,
+             token,
+            add_token(response, Data#{stream_acc := Rest}),
+            [{next_event, internal, tokenize}]};
+        <<"%", Rest/binary>> ->
+            io:format("Error: ~p~n", [Rest]),
+            {next_state,
+             token,
+             add_token(error, Data#{stream_acc := Rest}),
+            [{next_event, internal, tokenize}]};
         Other ->
             io:format("Other: ~p~n", [Other]),
             keep_state_and_data
@@ -69,37 +80,31 @@ waiting(Type, Content, Data) ->
 
 token(internal, tokenize, #{stream_acc := <<>>}) ->
     keep_state_and_data;
-token(internal, tokenize, Data) ->
-    Stream = maps:get(stream_acc, Data),
+token(internal, tokenize, #{stream_acc := Stream} = Data) ->
     %% TODO: Handle holleriths
     case Stream of
         <<32, Rest/binary>> ->
             NewData1 = add_token(maps:get(token_acc, Data), Data),
-            NewData2 = maps:put(token_acc, <<>>, NewData1),
             {next_state,
              token,
-             maps:put(stream_acc, Rest, NewData2),
+             NewData1#{token_acc := <<>>, stream_acc := Rest},
              [{next_event, internal, tokenize}]};
         <<10, Rest/binary>> ->
             Message = lists:reverse([maps:get(token_acc, Data) | maps:get(tokens, Data)]),
             io:format("Message: ~p~n", [Message]),
-            NewData0 = maps:put(messages, [Message | maps:get(messages, Data)], Data),
-            NewData1 = maps:put(token_acc, <<>>, NewData0),
-            NewData2 = maps:put(tokens, [], NewData1),
             {next_state,
              waiting,
-             maps:put(stream_acc, Rest, NewData2),
+             Data#{messages := [Message | maps:get(messages, Data)], token_acc := <<>>, tokens := [], stream_acc := Rest},
              [{next_event, internal, tokenize}]};
         <<$H, Rest/binary>> ->
             {next_state,
              hollerith,
-             maps:put(stream_acc, Rest, Data),
+             Data#{stream_acc := Rest},
              [{next_event, internal, tokenize}]};
         <<Char:8, Rest/binary>> ->
-            NewData1 = maps:put(token_acc, <<(maps:get(token_acc, Data))/binary, Char>>, Data),
             {next_state,
              token,
-             maps:put(stream_acc, Rest, NewData1),
+             Data#{stream_acc := Rest, token_acc := <<(maps:get(token_acc, Data))/binary, Char>>},
              [{next_event, internal, tokenize}]}
     end;
 token(Type, Content, Data) ->
@@ -111,7 +116,7 @@ hollerith(info, {tcp, Port, Payload}, #{port := Port} = Data) ->
     NewData = append_to_stream(Payload, Data),
     {keep_state, NewData, [{next_event, internal, tokenize}]};
 hollerith(internal, tokenize, #{token_acc := Prefix} = Data) when is_binary(Prefix) ->
-    {keep_state, maps:put(token_acc, binary_to_integer(Prefix), Data)};
+    {keep_state, Data#{token_acc := binary_to_integer(Prefix)}};
 hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Data)
     when is_integer(Length) ->
     case byte_size(Stream) >= Length of
@@ -119,9 +124,7 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
             keep_state_and_data;
         true ->
             <<Hollerith:Length/binary, Rest/binary>> = Stream,
-            NewData0 = maps:put(token_acc, Hollerith, Data),
-            NewData1 = maps:put(stream_acc, Rest, NewData0),
-            {next_state, tokenize, NewData1, [{next_event, internal, tokenize}]}
+            {next_state, tokenize, Data#{token_acc := Hollerith, stream_acc := Rest}, [{next_event, internal, tokenize}]}
     end;
 hollerith(Type, Content, Data) ->
     io:format("hollerith: ~p ~p ~p~n", [Type, Content, Data]),
@@ -131,11 +134,11 @@ hollerith(Type, Content, Data) ->
 %% Help functions
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-add_token(Token, Map) ->
-    maps:put(tokens, [Token | maps:get(tokens, Map)], Map).
+add_token(Token, #{tokens := Tokens} = Map) ->
+    Map#{tokens := [Token | Tokens]}.
 
-append_to_stream(Data, Map) ->
-    maps:put(stream_acc, <<(maps:get(stream_acc, Map))/binary, Data/binary>>, Map).
+append_to_stream(Data, #{stream_acc := Stream} = Map) ->
+    Map#{stream_acc := <<Stream/binary, Data/binary>>}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Tests
