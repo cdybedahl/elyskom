@@ -62,14 +62,14 @@ waiting(internal, tokenize, #{stream_acc := Payload} = Data) ->
             io:format("Response: ~p~n", [Rest]),
             {next_state,
              token,
-            add_token(response, Data#{stream_acc := Rest}),
-            [{next_event, internal, tokenize}]};
+             add_token(response, Data#{stream_acc := Rest}),
+             [{next_event, internal, tokenize}]};
         <<"%", Rest/binary>> ->
             io:format("Error: ~p~n", [Rest]),
             {next_state,
              token,
              add_token(error, Data#{stream_acc := Rest}),
-            [{next_event, internal, tokenize}]};
+             [{next_event, internal, tokenize}]};
         Other ->
             io:format("Other: ~p~n", [Other]),
             keep_state_and_data
@@ -94,13 +94,13 @@ token(internal, tokenize, #{stream_acc := Stream} = Data) ->
             io:format("Message: ~p~n", [Message]),
             {next_state,
              waiting,
-             Data#{messages := [Message | maps:get(messages, Data)], token_acc := <<>>, tokens := [], stream_acc := Rest},
+             Data#{messages := [Message | maps:get(messages, Data)],
+                   token_acc := <<>>,
+                   tokens := [],
+                   stream_acc := Rest},
              [{next_event, internal, tokenize}]};
         <<$H, Rest/binary>> ->
-            {next_state,
-             hollerith,
-             Data#{stream_acc := Rest},
-             [{next_event, internal, tokenize}]};
+            {next_state, hollerith, Data#{stream_acc := Rest}, [{next_event, internal, tokenize}]};
         <<Char:8, Rest/binary>> ->
             {next_state,
              token,
@@ -124,7 +124,10 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
             keep_state_and_data;
         true ->
             <<Hollerith:Length/binary, Rest/binary>> = Stream,
-            {next_state, tokenize, Data#{token_acc := Hollerith, stream_acc := Rest}, [{next_event, internal, tokenize}]}
+            {next_state,
+             tokenize,
+             Data#{token_acc := Hollerith, stream_acc := Rest},
+             [{next_event, internal, tokenize}]}
     end;
 hollerith(Type, Content, Data) ->
     io:format("hollerith: ~p ~p ~p~n", [Type, Content, Data]),
@@ -187,7 +190,11 @@ message_end_test() ->
                  DataOut1).
 
 hollerith_test() ->
-    DataIn = #{stream_acc => <<"Foobar\n">>, tokens => [], token_acc => <<"6">>, messages => []},
+    DataIn =
+        #{stream_acc => <<"Foobar\n">>,
+          tokens => [],
+          token_acc => <<"6">>,
+          messages => []},
     {keep_state, DataOut1} = hollerith(internal, tokenize, DataIn),
     {next_state, tokenize, DataOut2, _Actions} = hollerith(internal, tokenize, DataOut1),
     ?assertEqual(<<"Foobar">>, maps:get(token_acc, DataOut2)).
