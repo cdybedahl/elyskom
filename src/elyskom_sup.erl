@@ -31,7 +31,8 @@ init([]) ->
             intensity => 0,
             period => 1
         },
-    ChildSpecs = [#{id => elyskom1, start => {elyskom, start_link, []}}],
+    %% ChildSpecs = [#{id => elyskom1, start => {elyskom, start_link, []}}],
+    ChildSpecs = [],
     {ok, {SupFlags, ChildSpecs}}.
 
 %% internal functions

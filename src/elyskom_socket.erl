@@ -1,10 +1,12 @@
--module(elyskom).
+-module(elyskom_socket).
 
 -behaviour(gen_statem).
 
 -export([callback_mode/0]).
 -export([init/1]).
 -export([start_link/0]).
+-export([start_link/1]).
+-export([start_link/2]).
 -export([connecting/3]).
 -export([handshake/3]).
 -export([waiting/3]).
@@ -17,7 +19,9 @@
     messages => [],
     stream_acc => <<>>,
     token_acc => <<>>,
-    tokens => []
+    tokens => [],
+    hostname => "",
+    tcp_port => 0
 }).
 
 -define(HANDLE_COMMON,
@@ -29,13 +33,20 @@ callback_mode() ->
     state_functions.
 
 start_link() ->
-    gen_statem:start_link({local, ?MODULE}, ?MODULE, no_args, []).
+    start_link("kom.lysator.liu.se", 4894).
 
-init(_Args) ->
-    {ok, connecting, ?INITIAL_DATA, [{next_event, internal, startup}]}.
+start_link(Host) ->
+    start_link(Host, 4894).
 
-connecting(_Type, startup, #{delay := Delay} = Data) ->
-    case gen_tcp:connect("kom.lysator.liu.se", 4894, [binary, inet, {active, once}]) of
+start_link(Host, TcpPort) ->
+    gen_statem:start_link(?MODULE, {Host, TcpPort}, []).
+
+init({Host, TcpPort}) ->
+    Data = ?INITIAL_DATA,
+    {ok, connecting, Data#{hostname := Host, tcp_port := TcpPort}, [{next_event, internal, startup}]}.
+
+connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPort} = Data) ->
+    case gen_tcp:connect(Host, TcpPort, [binary, inet, {active, once}]) of
         {ok, Port} ->
             io:format("Connected.~n"),
             gen_tcp:send(Port, <<"A5Hcalle\n">>),
@@ -56,17 +67,14 @@ waiting(internal, tokenize, #{stream_acc := <<>>}) ->
 waiting(internal, tokenize, #{stream_acc := Payload} = Data) ->
     case Payload of
         <<":", Rest/binary>> ->
-            io:format("Async: ~p~n", [Rest]),
             {next_state, token, add_token(async, Data#{stream_acc := Rest}), [
                 {next_event, internal, tokenize}
             ]};
         <<"=", Rest/binary>> ->
-            io:format("Response: ~p~n", [Rest]),
             {next_state, token, add_token(response, Data#{stream_acc := Rest}), [
                 {next_event, internal, tokenize}
             ]};
         <<"%", Rest/binary>> ->
-            io:format("Error: ~p~n", [Rest]),
             {next_state, token, add_token(error, Data#{stream_acc := Rest}), [
                 {next_event, internal, tokenize}
             ]};
