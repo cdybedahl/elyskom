@@ -19,6 +19,9 @@
           token_acc => <<>>,
           tokens => []}).
 
+-define(HANDLE_COMMON,
+    ?FUNCTION_NAME(T, C, D) -> handle_common(T, C, ?FUNCTION_NAME, D)).
+
 callback_mode() ->
     state_functions.
 
@@ -74,14 +77,11 @@ waiting(internal, tokenize, #{stream_acc := Payload} = Data) ->
             io:format("Other: ~p~n", [Other]),
             keep_state_and_data
     end;
-waiting(Type, Content, Data) ->
-    io:format("waiting: ~p ~p ~p~n", [Type, Content, Data]),
-    keep_state_and_data.
+?HANDLE_COMMON.
 
 token(internal, tokenize, #{stream_acc := <<>>}) ->
     keep_state_and_data;
 token(internal, tokenize, #{stream_acc := Stream} = Data) ->
-    %% TODO: Handle holleriths
     case Stream of
         <<32, Rest/binary>> ->
             NewData1 = add_token(maps:get(token_acc, Data), Data),
@@ -107,9 +107,7 @@ token(internal, tokenize, #{stream_acc := Stream} = Data) ->
              Data#{stream_acc := Rest, token_acc := <<(maps:get(token_acc, Data))/binary, Char>>},
              [{next_event, internal, tokenize}]}
     end;
-token(Type, Content, Data) ->
-    io:format("token: ~p ~p ~p~n", [Type, Content, Data]),
-    keep_state_and_data.
+?HANDLE_COMMON.
 
 hollerith(info, {tcp, Port, Payload}, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
@@ -129,8 +127,13 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
              Data#{token_acc := Hollerith, stream_acc := Rest},
              [{next_event, internal, tokenize}]}
     end;
-hollerith(Type, Content, Data) ->
-    io:format("hollerith: ~p ~p ~p~n", [Type, Content, Data]),
+?HANDLE_COMMON.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Common to all states
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+handle_common(Type, Content, FunctionName, Data) ->
+    io:format("~p: [~p] ~p~n~p~n", [FunctionName, Type, Content, Data]),
     keep_state_and_data.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
