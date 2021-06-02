@@ -139,7 +139,12 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Common to all states
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-handle_common({call, From}, [CallName | Args], _Function, #{call_counter := Counter, port := Port} = Data) ->
+handle_common(
+    {call, From},
+    [CallName | Args],
+    _Function,
+    #{call_counter := Counter, port := Port} = Data
+) ->
     EncodedArgs = elyskom_call:make(CallName, Args),
     RefNo = integer_to_binary(Counter),
     Payload = iolist_to_binary([RefNo, 32] ++ EncodedArgs ++ [10]),
