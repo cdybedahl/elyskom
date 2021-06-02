@@ -22,7 +22,8 @@
     tokens => [],
     hostname => "",
     tcp_port => 0,
-    pending => null
+    pending => null,
+    call_counter => 1
 }).
 
 -define(HANDLE_COMMON,
@@ -138,6 +139,14 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Common to all states
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+handle_common({call, From}, [CallName | Args], _Function, #{call_counter := Counter, port := Port} = Data) ->
+    EncodedArgs = elyskom_call:make(CallName, Args),
+    RefNo = integer_to_binary(Counter),
+    Payload = iolist_to_binary([RefNo, 32] ++ EncodedArgs ++ [10]),
+    gen_tcp:send(Port, Payload),
+    %% TODO: Store call in pending, parse response
+    gen_statem:reply(From, Payload),
+    {keep_state, Data#{call_counter := Counter + 1}};
 handle_common(info, {tcp, Port, Payload}, _Function, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
     NewData = append_to_stream(Payload, Data),
