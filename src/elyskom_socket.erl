@@ -21,7 +21,8 @@
     token_acc => <<>>,
     tokens => [],
     hostname => "",
-    tcp_port => 0
+    tcp_port => 0,
+    pending => null
 }).
 
 -define(HANDLE_COMMON,
@@ -43,7 +44,10 @@ start_link(Host, TcpPort) ->
 
 init({Host, TcpPort}) ->
     Data = ?INITIAL_DATA,
-    {ok, connecting, Data#{hostname := Host, tcp_port := TcpPort}, [{next_event, internal, startup}]}.
+    Pending = ets:new(pending, [set, private]),
+    {ok, connecting, Data#{hostname := Host, tcp_port := TcpPort, pending := Pending}, [
+        {next_event, internal, startup}
+    ]}.
 
 connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPort} = Data) ->
     case gen_tcp:connect(Host, TcpPort, [binary, inet, {active, once}]) of
@@ -60,7 +64,6 @@ connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPo
 handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
     {next_state, waiting, Data}.
-
 
 waiting(internal, tokenize, #{stream_acc := <<>>}) ->
     keep_state_and_data;
@@ -115,7 +118,6 @@ token(internal, tokenize, #{stream_acc := Stream} = Data) ->
                 [{next_event, internal, tokenize}]}
     end;
 ?HANDLE_COMMON.
-
 
 hollerith(internal, tokenize, #{token_acc := Prefix} = Data) when is_binary(Prefix) ->
     {keep_state, Data#{token_acc := binary_to_integer(Prefix)}};
