@@ -143,12 +143,13 @@ handle_common(
     {call, From},
     [CallName | Args],
     _Function,
-    #{call_counter := Counter, port := Port} = Data
+    #{call_counter := Counter, port := Port, pending := Pending} = Data
 ) ->
     EncodedArgs = elyskom_call:make(CallName, Args),
     RefNo = integer_to_binary(Counter),
     Payload = iolist_to_binary([RefNo, 32] ++ EncodedArgs ++ [10]),
     gen_tcp:send(Port, Payload),
+    ets:insert_new(Pending, {RefNo, CallName, From}),
     %% TODO: Store call in pending, parse response
     gen_statem:reply(From, Payload),
     {keep_state, Data#{call_counter := Counter + 1}};
