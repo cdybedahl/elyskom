@@ -159,8 +159,10 @@ add_token(Token, #{tokens := Tokens} = Map) ->
 append_to_stream(Data, #{stream_acc := Stream} = Map) ->
     Map#{stream_acc := <<Stream/binary, Data/binary>>}.
 
+handle_message([error | Tail], Pending) ->
+    prot_a_response:parse(error, Tail, Pending);
 handle_message([response | Tail], Pending) ->
-    prot_a_response:parse(Tail, Pending);
+    prot_a_response:parse(response, Tail, Pending);
 handle_message([async, _ArgCount | Tail], _Pending) ->
     Msg = prot_a_async:parse(Tail),
     io:format("Async: ~p~n", [Msg]);
