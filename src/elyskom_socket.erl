@@ -140,8 +140,6 @@ handle_common(
     Payload = iolist_to_binary([RefNo, 32] ++ EncodedArgs ++ [10]),
     gen_tcp:send(Port, Payload),
     ets:insert_new(Pending, {RefNo, CallName, From}),
-    %% TODO: Store call in pending, parse response
-    gen_statem:reply(From, Payload),
     {keep_state, Data#{call_counter := Counter + 1}};
 handle_common(info, {tcp, Port, Payload}, _Function, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
@@ -161,6 +159,8 @@ add_token(Token, #{tokens := Tokens} = Map) ->
 append_to_stream(Data, #{stream_acc := Stream} = Map) ->
     Map#{stream_acc := <<Stream/binary, Data/binary>>}.
 
+handle_message([response | Tail], Pending) ->
+    prot_a_response:parse(Tail, Pending);
 handle_message([async, _ArgCount | Tail], _Pending) ->
     Msg = prot_a_async:parse(Tail),
     io:format("Async: ~p~n", [Msg]);
