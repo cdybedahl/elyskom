@@ -4,8 +4,6 @@
 
 -export([callback_mode/0]).
 -export([init/1]).
--export([start_link/0]).
--export([start_link/1]).
 -export([start_link/2]).
 -export([connecting/3]).
 -export([handshake/3]).
@@ -16,7 +14,6 @@
 -define(INITIAL_DATA, #{
     delay => 1,
     port => undef,
-    messages => [],
     stream_acc => <<>>,
     token_acc => <<>>,
     tokens => [],
@@ -33,12 +30,6 @@
 
 callback_mode() ->
     state_functions.
-
-start_link() ->
-    start_link("kom.lysator.liu.se", 4894).
-
-start_link(Host) ->
-    start_link(Host, 4894).
 
 start_link(Host, TcpPort) ->
     gen_statem:start_link(?MODULE, {Host, TcpPort}, []).
@@ -90,7 +81,7 @@ waiting(internal, tokenize, #{stream_acc := Payload} = Data) ->
 
 token(internal, tokenize, #{stream_acc := <<>>}) ->
     keep_state_and_data;
-token(internal, tokenize, #{stream_acc := Stream} = Data) ->
+token(internal, tokenize, #{stream_acc := Stream, pending := Pending} = Data) ->
     case Stream of
         <<32, Rest/binary>> ->
             NewData1 = add_token(maps:get(token_acc, Data), Data),
@@ -99,10 +90,9 @@ token(internal, tokenize, #{stream_acc := Stream} = Data) ->
             ]};
         <<10, Rest/binary>> ->
             Message = lists:reverse([maps:get(token_acc, Data) | maps:get(tokens, Data)]),
-            io:format("Message: ~p~n", [Message]),
+            handle_message(Message, Pending),
             {next_state, waiting,
                 Data#{
-                    messages := [Message | maps:get(messages, Data)],
                     token_acc := <<>>,
                     tokens := [],
                     stream_acc := Rest
@@ -170,6 +160,12 @@ add_token(Token, #{tokens := Tokens} = Map) ->
 
 append_to_stream(Data, #{stream_acc := Stream} = Map) ->
     Map#{stream_acc := <<Stream/binary, Data/binary>>}.
+
+handle_message([async, _ArgCount | Tail], _Pending) ->
+    Msg = prot_a_async:parse(Tail),
+    io:format("Async: ~p~n", [Msg]);
+handle_message(Message, _Pending) ->
+    io:format("Got a message: ~p~n", [Message]).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Tests
