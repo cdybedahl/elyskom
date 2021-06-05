@@ -1,5 +1,7 @@
 -module(prot_a_response).
 
+-include("elyskom.hrl").
+
 -export([parse/3]).
 
 parse(Type, [RefNo | Tail], Pending) ->

@@ -1,9 +1,9 @@
 -module(prot_a_time).
 
+-include("elyskom.hrl").
+
 -export([encode/1]).
 -export([parse/1]).
-
--define(i2b, erlang:integer_to_binary).
 
 encode({{Year, Month, Day}, {Hour, Minute, Second}}) ->
     [

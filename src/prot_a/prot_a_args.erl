@@ -1,5 +1,7 @@
 -module(prot_a_args).
 
+-include("elyskom.hrl").
+
 -export([parse/2]).
 
 parse(Types, ArgList) ->

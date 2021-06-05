@@ -1,5 +1,7 @@
 -module(prot_a_async).
 
+-include("elyskom.hrl").
+
 -export([parse/1]).
 
 parse(List) ->

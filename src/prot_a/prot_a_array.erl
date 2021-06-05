@@ -1,5 +1,7 @@
 -module(prot_a_array).
 
+-include("elyskom.hrl").
+
 -export([parse/2]).
 
 parse([RawCount, <<"{">> | Rest0], Type) ->

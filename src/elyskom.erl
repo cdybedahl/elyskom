@@ -1,12 +1,14 @@
 -module(elyskom).
 
+-include("elyskom.hrl").
+
 -export([new/0, new/1, new/2]).
 -export([login/3, login/4]).
 
 new() ->
-    new("kom.lysator.liu.se", 4894).
+    new("kom.lysator.liu.se", ?TCP_PORT).
 new(Host) ->
-    new(Host, 4894).
+    new(Host, ?TCP_PORT).
 new(Host, TcpPort) ->
     elyskom_socket:start_link(Host, TcpPort).
 
