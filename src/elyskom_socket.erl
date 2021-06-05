@@ -145,6 +145,17 @@ handle_common(info, {tcp, Port, Payload}, _Function, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
     NewData = append_to_stream(Payload, Data),
     {keep_state, NewData, [{next_event, internal, tokenize}]};
+handle_common(info, {tcp_closed, Port}, _Function, #{port := Port, pending := Pending} = Data) ->
+    ets:foldl(fun({{_,_,From}, noop}) ->
+        gen_statem:reply(From, {error, disconnected}),
+        noop
+    end, noop, Pending),
+    NewData = Data#{
+        stream_acc := <<>>,
+        token_acc := <<>>,
+        tokens := []
+    },
+    {next_state, connecting, NewData, [{next_event, internal, startup}]};
 handle_common(Type, Content, FunctionName, Data) ->
     io:format("~p: [~p] ~p~n~p~n", [FunctionName, Type, Content, Data]),
     keep_state_and_data.
@@ -216,8 +227,7 @@ message_end_test() ->
         #{
             stream_acc => <<"\n">>,
             tokens => [<<"17">>, <<"5">>, start],
-            token_acc => <<"23">>,
-            messages => []
+            token_acc => <<"23">>
         },
 
     {next_state, waiting, DataOut1, _Actions1} = token(internal, tokenize, DataIn),
@@ -225,8 +235,7 @@ message_end_test() ->
         #{
             stream_acc => <<>>,
             tokens => [],
-            token_acc => <<>>,
-            messages => [[start, <<"5">>, <<"17">>, <<"23">>]]
+            token_acc => <<>>
         },
         DataOut1
     ).
@@ -236,8 +245,7 @@ hollerith_test() ->
         #{
             stream_acc => <<"Foobar\n">>,
             tokens => [],
-            token_acc => <<"6">>,
-            messages => []
+            token_acc => <<"6">>
         },
     {keep_state, DataOut1} = hollerith(internal, tokenize, DataIn),
     {next_state, tokenize, DataOut2, _Actions} = hollerith(internal, tokenize, DataOut1),
