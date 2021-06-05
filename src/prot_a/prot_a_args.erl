@@ -11,7 +11,7 @@ parse(Types, ArgList) ->
     end, {ArgList, []}, Types),
     lists:reverse(Arguments).
 
-parse_type([_Type], _ArgL) ->
-    throw("Cannot deal with arrays yet");
+parse_type([Type], ArgL) ->
+    prot_a_array:parse(ArgL, Type);
 parse_type(Type,ArgL) when is_atom(Type) ->
     Type:parse(ArgL).
