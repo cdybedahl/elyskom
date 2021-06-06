@@ -122,7 +122,7 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
             keep_state_and_data;
         true ->
             <<Hollerith:Length/binary, Rest/binary>> = Stream,
-            {next_state, tokenize, Data#{token_acc := Hollerith, stream_acc := Rest}, [
+            {next_state, token, Data#{token_acc := Hollerith, stream_acc := Rest}, [
                 {next_event, internal, tokenize}
             ]}
     end;

@@ -15,6 +15,8 @@ parse(Type, List, _Pending) ->
 
 do_parse(response, login, []) ->
     ok;
+do_parse(response, accept_async, []) ->
+    ok;
 do_parse(error, _CallName, Args) ->
     [Code, Status] = prot_a_args:parse([prot_a_integer, prot_a_integer], Args),
     {error, prot_a_error:to_atom(Code), Status}.
