@@ -148,7 +148,7 @@ handle_common(info, {tcp, Port, Payload}, _Function, #{port := Port} = Data) ->
     NewData = append_to_stream(Payload, Data),
     {keep_state, NewData, [{next_event, internal, tokenize}]};
 handle_common(info, {tcp_closed, Port}, _Function, #{port := Port, pending := Pending} = Data) ->
-    ets:foldl(fun({{_,_,From}, noop}) ->
+    ets:foldl(fun({_,_,From}, noop) ->
         gen_statem:reply(From, {error, disconnected}),
         noop
     end, noop, Pending),
