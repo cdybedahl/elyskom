@@ -11,7 +11,11 @@ new() ->
 new(Host) ->
     new(Host, ?TCP_PORT).
 new(Host, TcpPort) ->
-    elyskom_socket:start_link(Host, TcpPort).
+    {ok, Pid} = elyskom_socket:start_link(Host, TcpPort),
+    receive
+        {elyskom, connected} -> {ok, Pid}
+    after 10000 -> {error, timeout}
+    end.
 
 login(Pid, UserNo, Password) ->
     login(Pid, UserNo, Password, false).

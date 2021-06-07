@@ -190,8 +190,7 @@ handle_message([response | Tail], #{pending := Pending}) ->
     prot_a_response:parse(response, Tail, Pending);
 handle_message([async, _ArgCount | Tail], #{peer := Peer}) ->
     Msg = prot_a_async:parse(Tail),
-    Peer ! {elyskom, Msg},
-    io:format("Async: ~p~n", [Msg]);
+    Peer ! {elyskom, Msg};
 handle_message(Message, _Pending) ->
     io:format("Got a message: ~p~n", [Message]).
 
