@@ -22,7 +22,8 @@
     hostname => "",
     tcp_port => 0,
     pending => null,
-    call_counter => 1
+    call_counter => 1,
+    peer => null
 }).
 
 -define(HANDLE_COMMON,
@@ -34,29 +35,30 @@ callback_mode() ->
     state_functions.
 
 start_link(Host, TcpPort) ->
-    gen_statem:start_link(?MODULE, {Host, TcpPort}, []).
+    gen_statem:start_link(?MODULE, {Host, TcpPort, self()}, []).
 
-init({Host, TcpPort}) ->
+init({Host, TcpPort, Peer}) ->
     Data = ?INITIAL_DATA,
     Pending = ets:new(pending, [set, private]),
-    {ok, connecting, Data#{hostname := Host, tcp_port := TcpPort, pending := Pending}, [
-        {next_event, internal, startup}
-    ]}.
+    {ok, connecting, Data#{hostname := Host, tcp_port := TcpPort, pending := Pending, peer := Peer},
+        [
+            {next_event, internal, startup}
+        ]}.
 
 connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPort} = Data) ->
     case gen_tcp:connect(Host, TcpPort, [binary, inet, {active, once}]) of
         {ok, Port} ->
-            io:format("Connected.~n"),
             gen_tcp:send(Port, <<"A5Hcalle\n">>),
             {next_state, handshake, Data#{port := Port}};
         _ ->
             NewDelay = erlang:min(300, 2 * Delay),
-            io:format("Connecting failed. Delaying ~p seconds.~n", [Delay]),
+            logger:error("Connecting failed. Delaying ~p seconds.", [Delay]),
             {keep_state, Data#{delay := NewDelay}, [{timeout, Delay * 1000, startup}]}
     end.
 
-handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port} = Data) ->
+handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port, peer := Peer} = Data) ->
     inet:setopts(Port, [{active, once}]),
+    Peer ! {elyskom, connected},
     {next_state, waiting, Data}.
 
 waiting(internal, tokenize, #{stream_acc := <<>>}) ->
@@ -83,7 +85,7 @@ waiting(internal, tokenize, #{stream_acc := Payload} = Data) ->
 
 token(internal, tokenize, #{stream_acc := <<>>}) ->
     keep_state_and_data;
-token(internal, tokenize, #{stream_acc := Stream, pending := Pending} = Data) ->
+token(internal, tokenize, #{stream_acc := Stream} = Data) ->
     case Stream of
         <<32, Rest/binary>> ->
             NewData1 = add_token(maps:get(token_acc, Data), Data),
@@ -92,7 +94,7 @@ token(internal, tokenize, #{stream_acc := Stream, pending := Pending} = Data) ->
             ]};
         <<10, Rest/binary>> ->
             Message = lists:reverse([maps:get(token_acc, Data) | maps:get(tokens, Data)]),
-            handle_message(Message, Pending),
+            handle_message(Message, Data),
             {next_state, waiting,
                 Data#{
                     token_acc := <<>>,
@@ -147,16 +149,26 @@ handle_common(info, {tcp, Port, Payload}, _Function, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
     NewData = append_to_stream(Payload, Data),
     {keep_state, NewData, [{next_event, internal, tokenize}]};
-handle_common(info, {tcp_closed, Port}, _Function, #{port := Port, pending := Pending} = Data) ->
-    ets:foldl(fun({_,_,From}, noop) ->
-        gen_statem:reply(From, {error, disconnected}),
-        noop
-    end, noop, Pending),
+handle_common(
+    info,
+    {tcp_closed, Port},
+    _Function,
+    #{port := Port, pending := Pending, peer := Peer} = Data
+) ->
+    ets:foldl(
+        fun({_, _, From}, noop) ->
+            gen_statem:reply(From, {error, disconnected}),
+            noop
+        end,
+        noop,
+        Pending
+    ),
     NewData = Data#{
         stream_acc := <<>>,
         token_acc := <<>>,
         tokens := []
     },
+    Peer ! {elyskom, disconnected},
     {next_state, connecting, NewData, [{next_event, internal, startup}]};
 handle_common(Type, Content, FunctionName, Data) ->
     io:format("~p: [~p] ~p~n~p~n", [FunctionName, Type, Content, Data]),
@@ -172,12 +184,13 @@ add_token(Token, #{tokens := Tokens} = Map) ->
 append_to_stream(Data, #{stream_acc := Stream} = Map) ->
     Map#{stream_acc := <<Stream/binary, Data/binary>>}.
 
-handle_message([error | Tail], Pending) ->
+handle_message([error | Tail], #{pending := Pending}) ->
     prot_a_response:parse(error, Tail, Pending);
-handle_message([response | Tail], Pending) ->
+handle_message([response | Tail], #{pending := Pending}) ->
     prot_a_response:parse(response, Tail, Pending);
-handle_message([async, _ArgCount | Tail], _Pending) ->
+handle_message([async, _ArgCount | Tail], #{peer := Peer}) ->
     Msg = prot_a_async:parse(Tail),
+    Peer ! {elyskom, Msg},
     io:format("Async: ~p~n", [Msg]);
 handle_message(Message, _Pending) ->
     io:format("Got a message: ~p~n", [Message]).

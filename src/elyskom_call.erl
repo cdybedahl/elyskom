@@ -11,10 +11,11 @@ make(accept_async, AsyncList) ->
 
 process(Pattern, Pairs) ->
     Elements = lists:map(
-        fun({[Type], Data}) ->
-            prot_a_array:encode(Type, Data);
-           ({Type, Data}) when is_atom(Type) ->
-            Type:encode(Data)
+        fun
+            ({[Type], Data}) ->
+                prot_a_array:encode(Type, Data);
+            ({Type, Data}) when is_atom(Type) ->
+                Type:encode(Data)
         end,
         lists:zip(Pattern, Pairs)
     ),
@@ -24,7 +25,7 @@ process(Pattern, Pairs) ->
 -include_lib("eunit/include/eunit.hrl").
 
 accept_async_test() ->
-    Res = ?l2b(make(accept_async, lists:seq(2,10,2))),
+    Res = ?l2b(make(accept_async, lists:seq(2, 10, 2))),
     ?assertEqual(<<"80 5 { 2 4 6 8 10 }">>, Res).
 
 -endif.
