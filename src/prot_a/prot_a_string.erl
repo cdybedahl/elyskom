@@ -1,6 +1,10 @@
 -module(prot_a_string).
 
 -export([encode/1]).
+-export([parse/1]).
+
+parse([Str | Tail]) ->
+    {Str, Tail}.
 
 encode(String) when is_binary(String) ->
     Len = integer_to_binary(byte_size(String)),

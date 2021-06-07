@@ -10,6 +10,13 @@ parse(List) ->
 do_parse([<<"0">> | Tail]) ->
     [TextNo, TextStatOld] = prot_a_args:parse([prot_a_integer, prot_a_textstat_old], Tail),
     {async_new_text_old, TextNo, TextStatOld};
+do_parse([<<"6">> | Tail]) ->
+    [PersNo, ConfNo, SessionNo, What, UName] =
+        prot_a_args:parse(
+            [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_string, prot_a_string],
+            Tail
+        ),
+    {async_i_am_on, PersNo, ConfNo, SessionNo, What, UName};
 do_parse([<<"7">>]) ->
     async_saving_database;
 do_parse([<<"9">> | Tail]) ->
