@@ -5,6 +5,7 @@
 -export([new/0, new/1, new/2]).
 -export([login/3, login/4]).
 -export([accept_async/2]).
+-export([get_uconf_stat/2]).
 
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
@@ -25,3 +26,6 @@ login(Pid, UserNo, Password, Invisible) ->
 
 accept_async(Pid, AsyncList) ->
     gen_statem:call(Pid, [accept_async, AsyncList]).
+
+get_uconf_stat(Pid, ConfNo) ->
+    gen_statem:call(Pid, [get_uconf_stat, ConfNo]).

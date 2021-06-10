@@ -13,6 +13,9 @@ parse(Type, List, _Pending) ->
     logger:error("Unknown ~p: ~p", [Type, List]),
     response_wtf_is_that.
 
+do_parse(response, get_uconf_stat, Args) ->
+    [Stat] = prot_a_args:parse([prot_a_uconference], Args),
+    Stat;
 do_parse(response, login, []) ->
     ok;
 do_parse(response, accept_async, []) ->

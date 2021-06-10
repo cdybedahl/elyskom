@@ -114,8 +114,12 @@ token(internal, tokenize, #{stream_acc := Stream} = Data) ->
     end;
 ?HANDLE_COMMON.
 
+hollerith(internal, tokenize, #{stream_acc := <<>>}) ->
+    keep_state_and_data;
 hollerith(internal, tokenize, #{token_acc := Prefix} = Data) when is_binary(Prefix) ->
-    {keep_state, Data#{token_acc := binary_to_integer(Prefix)}};
+    {keep_state, Data#{token_acc := binary_to_integer(Prefix)}, [
+        {next_event, internal, tokenize}
+    ]};
 hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Data) when
     is_integer(Length)
 ->

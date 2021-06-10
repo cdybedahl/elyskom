@@ -4,10 +4,12 @@
 
 -export([make/2]).
 
+make(get_uconf_stat, Args) ->
+    process([prot_a_integer], [ 78 | Args]);
 make(login, Args) ->
-    process([prot_a_integer, prot_a_integer, prot_a_string, prot_a_bool], [62 | Args]);
+    process([prot_a_integer, prot_a_string, prot_a_bool], [62 | Args]);
 make(accept_async, AsyncList) ->
-    process([prot_a_integer, [prot_a_integer]], [80 | AsyncList]).
+    process([[prot_a_integer]], [80 | AsyncList]).
 
 process(Pattern, Pairs) ->
     Elements = lists:map(
@@ -17,7 +19,7 @@ process(Pattern, Pairs) ->
             ({Type, Data}) when is_atom(Type) ->
                 Type:encode(Data)
         end,
-        lists:zip(Pattern, Pairs)
+        lists:zip([prot_a_integer | Pattern], Pairs)
     ),
     lists:join(<<" ">>, Elements).
 
