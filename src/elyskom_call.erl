@@ -4,6 +4,8 @@
 
 -export([make/2]).
 
+make(get_text, Args) ->
+    process([prot_a_integer, prot_a_integer, prot_a_integer], [ 25 | Args]);
 make(get_uconf_stat, Args) ->
     process([prot_a_integer], [ 78 | Args]);
 make(login, Args) ->

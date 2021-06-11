@@ -13,12 +13,13 @@ parse(Type, List, _Pending) ->
     logger:error("Unknown ~p: ~p", [Type, List]),
     response_wtf_is_that.
 
+do_parse(response, get_text, Args) ->
+    [Text] = prot_a_args:parse([prot_a_string], Args),
+    Text;
 do_parse(response, get_uconf_stat, Args) ->
     [Stat] = prot_a_args:parse([prot_a_uconference], Args),
     Stat;
-do_parse(response, login, []) ->
-    ok;
-do_parse(response, accept_async, []) ->
+do_parse(response, _CallName, []) ->
     ok;
 do_parse(error, _CallName, Args) ->
     [Code, Status] = prot_a_args:parse([prot_a_integer, prot_a_integer], Args),
