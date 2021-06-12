@@ -1,7 +1,5 @@
 -module(elyskom_socket).
 
--include("elyskom.hrl").
-
 -behaviour(gen_statem).
 
 -export([callback_mode/0]).

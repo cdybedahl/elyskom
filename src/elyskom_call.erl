@@ -1,7 +1,5 @@
 -module(elyskom_call).
 
--include("elyskom.hrl").
-
 -export([make/2]).
 -export([response/2]).
 

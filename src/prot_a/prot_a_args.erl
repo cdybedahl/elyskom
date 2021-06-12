@@ -1,7 +1,5 @@
 -module(prot_a_args).
 
--include("elyskom.hrl").
-
 -export([parse/2]).
 -export([get/2]).
 
