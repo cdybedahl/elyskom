@@ -7,6 +7,7 @@
 -export([accept_async/2]).
 -export([get_uconf_stat/2]).
 -export([get_text/4]).
+-export([get_time/1]).
 
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
@@ -33,3 +34,6 @@ get_uconf_stat(Pid, ConfNo) ->
 
 get_text(Pid, TextNo, StartPos, EndPos) ->
     gen_statem:call(Pid, [get_text, TextNo, StartPos, EndPos]).
+
+get_time(Pid) ->
+    gen_statem:call(Pid, [get_time]).

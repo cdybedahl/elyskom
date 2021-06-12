@@ -13,6 +13,9 @@ parse(Type, List, _Pending) ->
     logger:error("Unknown ~p: ~p", [Type, List]),
     response_wtf_is_that.
 
+do_parse(response, get_time, Args) ->
+    [Time] = prot_a_args:parse([prot_a_time], Args),
+    Time;
 do_parse(response, get_text, Args) ->
     [Text] = prot_a_args:parse([prot_a_string], Args),
     Text;
