@@ -48,7 +48,8 @@ init({Host, TcpPort, Peer}) ->
 connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPort} = Data) ->
     case gen_tcp:connect(Host, TcpPort, [binary, inet, {active, once}]) of
         {ok, Port} ->
-            gen_tcp:send(Port, <<"A5Hcalle\n">>),
+            gen_tcp:send(Port, <<"A7Helyskom\n">>),
+            logger:debug("TCP connection established."),
             {next_state, handshake, Data#{port := Port}};
         _ ->
             NewDelay = erlang:min(300, 2 * Delay),
@@ -59,6 +60,7 @@ connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPo
 handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port, peer := Peer} = Data) ->
     inet:setopts(Port, [{active, once}]),
     Peer ! {elyskom, connected},
+    logger:info("Handshake done, Protocol A connection established."),
     {next_state, waiting, Data}.
 
 waiting(internal, tokenize, #{stream_acc := <<>>}) ->
@@ -152,6 +154,7 @@ handle_common(
 handle_common(info, {tcp, Port, Payload}, _Function, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
     NewData = append_to_stream(Payload, Data),
+    logger:debug("Incoming data: ~p", [NewData]),
     {keep_state, NewData, [{next_event, internal, tokenize}]};
 handle_common(
     info,
@@ -159,6 +162,7 @@ handle_common(
     _Function,
     #{port := Port, pending := Pending, peer := Peer} = Data
 ) ->
+    logger:warning("TCP connection lost"),
     ets:foldl(
         fun({_, _, From}, noop) ->
             gen_statem:reply(From, {error, disconnected}),
