@@ -3,6 +3,7 @@
 -include("elyskom.hrl").
 
 -export([make/2]).
+-export([response/2]).
 
 make(CallName, Args) ->
     Pattern = make_args(CallName),
@@ -29,6 +30,18 @@ make_args(get_text) -> [prot_a_integer, prot_a_integer, prot_a_integer];
 make_args(get_uconf_stat) -> [prot_a_integer];
 make_args(login) -> [prot_a_integer, prot_a_string, prot_a_bool];
 make_args(accept_async) -> [[prot_a_integer]].
+
+response(get_time, Args) ->
+    [Time] = prot_a_args:parse([prot_a_time], Args),
+    Time;
+response(get_text, Args) ->
+    [Text] = prot_a_args:parse([prot_a_string], Args),
+    Text;
+response(get_uconf_stat, Args) ->
+    [Stat] = prot_a_args:parse([prot_a_uconference], Args),
+    Stat;
+response(_CallName, []) ->
+    ok.
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
