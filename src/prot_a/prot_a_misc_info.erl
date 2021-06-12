@@ -24,7 +24,7 @@ parse([<<"7">> | Tail]) ->
 parse([<<"8">>, Integer | Tail]) ->
     {{sent_by, ?b2i(Integer)}, Tail};
 parse([<<"9">> | Tail]) ->
-    {Time, Rest} = prot_a_integer:parse(Tail),
+    {Time, Rest} = prot_a_time:parse(Tail),
     {{sent_at, Time}, Rest};
 parse([<<"15">>, Integer | Tail]) ->
     {{bcc_recpt, ?b2i(Integer)}, Tail}.

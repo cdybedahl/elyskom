@@ -5,6 +5,8 @@
 -export([parse/2]).
 -export([encode/2]).
 
+parse([<<"0">>, <<"*">> | Rest], _Type) ->
+    {[], Rest};
 parse([RawCount, <<"{">> | Rest0], Type) ->
     Count = binary_to_integer(RawCount),
     {Args, Rest1} =

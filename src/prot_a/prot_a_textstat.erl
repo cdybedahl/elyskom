@@ -1,7 +1,5 @@
 -module(prot_a_textstat).
 
--include("elyskom.hrl").
-
 -export([parse/1]).
 
 parse(List) ->
