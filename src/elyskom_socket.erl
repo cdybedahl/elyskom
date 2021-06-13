@@ -38,10 +38,9 @@ start_link(Host, TcpPort) ->
 init({Host, TcpPort, Peer}) ->
     Data = ?INITIAL_DATA,
     Pending = ets:new(pending, [set, private]),
-    {ok, connecting, Data#{hostname := Host, tcp_port := TcpPort, pending := Pending, peer := Peer},
-        [
-            {next_event, internal, startup}
-        ]}.
+    {ok, connecting, Data#{hostname := Host, tcp_port := TcpPort, pending := Pending, peer := Peer}, [
+        {next_event, internal, startup}
+    ]}.
 
 connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPort} = Data) ->
     case gen_tcp:connect(Host, TcpPort, [binary, inet, {active, once}]) of

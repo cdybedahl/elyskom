@@ -8,15 +8,19 @@ parse(Types, ArgList) ->
     Arguments.
 
 get(Types, ArgList) ->
-    {Tail, Arguments} = lists:foldl(fun(Type, {ArgL, ResL}) ->
-        {Result, Tail} = parse_type(Type,ArgL),
-        {Tail, [Result | ResL]}
-    end, {ArgList, []}, Types),
+    {Tail, Arguments} = lists:foldl(
+        fun(Type, {ArgL, ResL}) ->
+            {Result, Tail} = parse_type(Type, ArgL),
+            {Tail, [Result | ResL]}
+        end,
+        {ArgList, []},
+        Types
+    ),
     {lists:reverse(Arguments), Tail}.
 
 parse_type([Type], ArgL) ->
     prot_a_array:parse(ArgL, Type);
-parse_type(Type,ArgL) when is_atom(Type) ->
+parse_type(Type, ArgL) when is_atom(Type) ->
     Type:parse(ArgL).
 
 -ifdef(TEST).
@@ -27,6 +31,6 @@ get_test() ->
         [prot_a_integer, prot_a_integer, prot_a_string],
         [<<"1">>, <<"2">>, <<"Foo">>, <<"Bar">>]
     ),
-    ?assertEqual({[1,2,<<"Foo">>], [<<"Bar">>]}, Res).
+    ?assertEqual({[1, 2, <<"Foo">>], [<<"Bar">>]}, Res).
 
 -endif.

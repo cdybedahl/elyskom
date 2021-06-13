@@ -3,7 +3,7 @@
 -export([encode/1]).
 -export([parse/1]).
 
-parse([Str | Tail]) ->
+parse([Str | Tail]) ->
     {Str, Tail}.
 
 encode(String) when is_binary(String) ->

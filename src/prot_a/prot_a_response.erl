@@ -2,7 +2,7 @@
 
 -export([parse/3]).
 
-parse(Type, [RefNo | Tail], Pending) ->
+parse(Type, [RefNo | Tail], Pending) ->
     [{RefNo, CallName, From}] = ets:lookup(Pending, RefNo),
     ets:delete(Pending, RefNo),
     Res = do_parse(Type, CallName, Tail),

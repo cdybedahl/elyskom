@@ -45,7 +45,7 @@ parse_test() ->
     ?assertEqual({[45, 26, 9, 5, 5], [<<"Extra">>]}, Res).
 
 produce_test() ->
-    List = lists:seq(1,5),
+    List = lists:seq(1, 5),
     Res = ?l2b(encode(prot_a_integer, List)),
     ?assertEqual(<<"5 { 1 2 3 4 5 }">>, Res).
 

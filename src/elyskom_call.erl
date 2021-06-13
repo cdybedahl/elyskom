@@ -40,6 +40,7 @@ response(get_text, Args) -> one_arg(prot_a_string, Args);
 response(get_uconf_stat, Args) -> one_arg(prot_a_uconference, Args);
 response(_CallName, []) -> ok.
 
+%%% Helpers
 one_arg(Type, List) ->
     [Arg] = prot_a_args:parse([Type], List),
     Arg.
