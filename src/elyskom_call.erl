@@ -18,6 +18,7 @@ make(CallName, Args) ->
     lists:join(<<" ">>, Elements).
 
 %%% Protocol A call numbers
+call_no(who_is_on_dynamic) -> 83;
 call_no(get_text_stat) -> 90;
 call_no(get_time) -> 35;
 call_no(get_text) -> 25;
@@ -26,6 +27,7 @@ call_no(login) -> 62;
 call_no(accept_async) -> 80.
 
 %%% Lists of argument types for calls
+make_args(who_is_on_dynamic) -> [prot_a_bool, prot_a_bool, prot_a_integer];
 make_args(get_text_stat) -> [prot_a_integer];
 make_args(get_time) -> [];
 make_args(get_text) -> [prot_a_integer, prot_a_integer, prot_a_integer];
@@ -34,6 +36,7 @@ make_args(login) -> [prot_a_integer, prot_a_string, prot_a_bool];
 make_args(accept_async) -> [[prot_a_integer]].
 
 %%% How to turn returned lists from calls into something useful
+response(who_is_on_dynamic, Args) -> one_arg([prot_a_dynamic_session_info], Args);
 response(get_text_stat, Args) -> one_arg(prot_a_textstat, Args);
 response(get_time, Args) -> one_arg(prot_a_time, Args);
 response(get_text, Args) -> one_arg(prot_a_string, Args);

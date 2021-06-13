@@ -9,6 +9,7 @@
 -export([get_text/4]).
 -export([get_time/1]).
 -export([get_text_stat/2]).
+-export([who_is_on_dynamic/4]).
 
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
@@ -41,3 +42,6 @@ get_text_stat(Pid, TextNo) ->
 
 get_time(Pid) ->
     gen_statem:call(Pid, [get_time]).
+
+who_is_on_dynamic(Pid, WantVisible, WantInvisible, ActiveLast) ->
+    gen_statem:call(Pid, [who_is_on_dynamic, WantVisible, WantInvisible, ActiveLast]).

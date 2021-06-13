@@ -7,7 +7,7 @@ parse(List) ->
         [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_bitstring, prot_a_string],
         List
     ),
-    Flags = parse_a_bitstring:annotate(
+    Flags = prot_a_bitstring:annotate(
         [invisible, user_active_used, user_absent, reserved3, reserved4, reserved5, reserved6, reserved7],
         RawFlags
     ),
