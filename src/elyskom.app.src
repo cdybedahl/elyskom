@@ -5,7 +5,8 @@
     {mod, {elyskom_app, []}},
     {applications, [
         kernel,
-        stdlib
+        stdlib,
+        iconv
     ]},
     {env, []},
     {modules, []},

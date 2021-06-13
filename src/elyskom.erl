@@ -17,7 +17,7 @@ new(Host) ->
 new(Host, TcpPort) ->
     {ok, Pid} = elyskom_socket:start_link(Host, TcpPort),
     receive
-        {elyskom, connected} -> {ok, Pid}
+        {elyskom, Pid, connected} -> {ok, Pid}
     after 10000 -> {error, timeout}
     end.
 

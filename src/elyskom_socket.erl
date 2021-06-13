@@ -57,7 +57,7 @@ connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPo
 
 handshake(info, {tcp, Port, <<"LysKOM\n">>}, #{port := Port, peer := Peer} = Data) ->
     inet:setopts(Port, [{active, once}]),
-    Peer ! {elyskom, connected},
+    Peer ! {elyskom, self(), connected},
     logger:info("Handshake done, Protocol A connection established."),
     {next_state, waiting, Data}.
 
@@ -174,7 +174,7 @@ handle_common(
         token_acc := <<>>,
         tokens := []
     },
-    Peer ! {elyskom, disconnected},
+    Peer ! {elyskom, self(), disconnected},
     {next_state, connecting, NewData, [{next_event, internal, startup}]};
 handle_common(Type, Content, FunctionName, Data) ->
     io:format("~p: [~p] ~p~n~p~n", [FunctionName, Type, Content, Data]),
@@ -196,7 +196,7 @@ handle_message([response | Tail], #{pending := Pending}) ->
     prot_a_response:parse(response, Tail, Pending);
 handle_message([async, _ArgCount | Tail], #{peer := Peer}) ->
     Msg = prot_a_async:parse(Tail),
-    Peer ! {elyskom, Msg};
+    Peer ! {elyskom, self(), Msg};
 handle_message(Message, _Pending) ->
     io:format("Got a message: ~p~n", [Message]).
 
