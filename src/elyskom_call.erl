@@ -17,6 +17,7 @@ make(CallName, Args) ->
     ),
     lists:join(<<" ">>, Elements).
 
+%%% Protocol A call numbers
 call_no(get_text_stat) -> 90;
 call_no(get_time) -> 35;
 call_no(get_text) -> 25;
@@ -24,6 +25,7 @@ call_no(get_uconf_stat) -> 78;
 call_no(login) -> 62;
 call_no(accept_async) -> 80.
 
+%%% Lists of argument types for calls
 make_args(get_text_stat) -> [prot_a_integer];
 make_args(get_time) -> [];
 make_args(get_text) -> [prot_a_integer, prot_a_integer, prot_a_integer];
@@ -31,20 +33,16 @@ make_args(get_uconf_stat) -> [prot_a_integer];
 make_args(login) -> [prot_a_integer, prot_a_string, prot_a_bool];
 make_args(accept_async) -> [[prot_a_integer]].
 
-response(get_text_stat, Args) ->
-    [TextStat] = prot_a_args:parse([prot_a_textstat], Args),
-    TextStat;
-response(get_time, Args) ->
-    [Time] = prot_a_args:parse([prot_a_time], Args),
-    Time;
-response(get_text, Args) ->
-    [Text] = prot_a_args:parse([prot_a_string], Args),
-    Text;
-response(get_uconf_stat, Args) ->
-    [Stat] = prot_a_args:parse([prot_a_uconference], Args),
-    Stat;
-response(_CallName, []) ->
-    ok.
+%%% How to turn returned lists from calls into something useful
+response(get_text_stat, Args) -> one_arg(prot_a_textstat, Args);
+response(get_time, Args) -> one_arg(prot_a_time, Args);
+response(get_text, Args) -> one_arg(prot_a_string, Args);
+response(get_uconf_stat, Args) -> one_arg(prot_a_uconference, Args);
+response(_CallName, []) -> ok.
+
+one_arg(Type, List) ->
+    [Arg] = prot_a_args:parse([Type], List),
+    Arg.
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
