@@ -11,6 +11,7 @@
 -export([get_text_stat/2]).
 -export([who_is_on_dynamic/4]).
 -export([lookup_z_name/4]).
+-export([re_z_lookup/4]).
 
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
@@ -49,3 +50,6 @@ who_is_on_dynamic(Pid, WantVisible, WantInvisible, ActiveLast) ->
 
 lookup_z_name(Pid, Name, WantPers, WantConfs) ->
     gen_statem:call(Pid, [lookup_z_name, Name, WantPers, WantConfs]).
+
+re_z_lookup(Pid, Name, WantPers, WantConfs) ->
+    gen_statem:call(Pid, [re_z_lookup, Name, WantPers, WantConfs]).
