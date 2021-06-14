@@ -6,7 +6,7 @@ parse(List) ->
     {
         [Name, RawType, ConfNo],
         Rest
-    } = prot_a_parse:get([prot_a_string, prot_a_bitstring, prot_a_integer], List),
+    } = prot_a_args:get([prot_a_string, prot_a_bitstring, prot_a_integer], List),
     Type = prot_a_bitstring:annotate([rd_prot, original, secret, letterbox], RawType),
     {
         #{
