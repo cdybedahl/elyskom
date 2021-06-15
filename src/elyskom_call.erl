@@ -202,6 +202,24 @@ make_args(user_active) -> [];
 make_args(who_am_i) -> [prot_a_integer].
 
 %%% How to turn returned lists from calls into something useful
+response(create_anonymous_text, Args) -> one_arg(prot_a_integer, Args);
+response(create_conf, Args) -> one_arg(prot_a_integer, Args);
+response(create_person, Args) -> one_arg(prot_a_integer, Args);
+response(create_text, Args) -> one_arg(prot_a_integer, Args);
+response(find_next_conf_no, Args) -> one_arg(prot_a_integer, Args);
+response(find_next_text_no, Args) -> one_arg(prot_a_integer, Args);
+response(find_previous_conf_no, Args) -> one_arg(prot_a_integer, Args);
+response(find_previous_text_no, Args) -> one_arg(prot_a_integer, Args);
+response(first_unused_conf_no, Args) -> one_arg(prot_a_integer, Args);
+response(first_unused_text_no, Args) -> one_arg(prot_a_integer, Args);
+response(get_client_name, Args) -> one_arg(prot_a_string, Args);
+response(get_client_version, Args) -> one_arg(prot_a_string, Args);
+response(get_collate_table, Args) -> one_arg(prot_a_string, Args);
+response(get_last_text, Args) -> one_arg(prot_a_integer, Args);
+response(get_unread_confs, Args) -> one_arg([prot_a_string], Args);
+response(query_async, Args) -> one_arg([prot_a_integer], Args);
+response(query_predefined_aux_items, Args) -> one_arg([prot_a_integer], Args);
+response(who_am_i, Args) -> one_arg(prot_a_integer, Args);
 response(re_z_lookup, Args) -> one_arg([prot_a_conf_z_info], Args);
 response(lookup_z_name, Args) -> one_arg([prot_a_conf_z_info], Args);
 response(who_is_on_dynamic, Args) -> one_arg([prot_a_dynamic_session_info], Args);
@@ -209,6 +227,22 @@ response(get_text_stat, Args) -> one_arg(prot_a_textstat, Args);
 response(get_time, Args) -> one_arg(prot_a_time, Args);
 response(get_text, Args) -> one_arg(prot_a_string, Args);
 response(get_uconf_stat, Args) -> one_arg(prot_a_uconference, Args);
+%% response(get_boottime_info, Args) -> ;
+%% response(get_conf_stat, Args) -> ;
+%% response(get_info, Args) -> ;
+%% response(get_marks, Args) -> ;
+%% response(get_members, Args) -> ;
+%% response(get_membership, Args) -> ;
+%% response(get_person_stat, Args) -> ;
+%% response(get_static_session_info, Args) -> ;
+%% response(get_stats, Args) -> ;
+%% response(get_stats_description, Args) -> ;
+%% response(get_version_info, Args) -> ;
+%% response(local_to_global, Args) -> ;
+%% response(local_to_global_reverse, Args) -> ;
+%% response(map_created_texts, Args) -> ;
+%% response(map_created_texts_reverse, Args) -> ;
+%% response(query_read_texts, Args) -> ;
 response(_CallName, []) -> ok.
 
 %%% Helpers
