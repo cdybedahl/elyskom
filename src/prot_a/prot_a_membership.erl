@@ -3,16 +3,21 @@
 -export([encode/1]).
 
 encode(Map) ->
-    BitList = lists:map(fun(A) -> maps:get(A, Map, false) end, [
-        invitation,
-        passive,
-        secret,
-        passive_message_invert,
-        reserved2,
-        reserved3,
-        reserved4,
-        reserved5
-    ]),
+    BitList = lists:map(
+        fun(A) ->
+            maps:get(A, Map, false)
+        end,
+        [
+            invitation,
+            passive,
+            secret,
+            passive_message_invert,
+            reserved2,
+            reserved3,
+            reserved4,
+            reserved5
+        ]
+    ),
     prot_a_bitstring:encode(BitList).
 
 -ifdef(TEST).

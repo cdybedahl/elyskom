@@ -2,6 +2,7 @@
 
 %% -export([encode/1]).
 -export([parse/1]).
+-export([encode/1]).
 
 parse(List) ->
     {[AuxNo, Tag, Creator, CreatedAt, Flags, InheritLimit, Data], Tail} =
@@ -29,6 +30,16 @@ parse(List) ->
         },
         Tail
     }.
+
+encode(#{tag := Tag, flags := Flags, inherit_limit := InheritLimit, data := Data}) ->
+    iolist_to_binary(
+        lists:join(<<" ">>, [
+            prot_a_integer:encode(Tag),
+            prot_a_aux_item_flags:encode(Flags),
+            prot_a_integer:encode(InheritLimit),
+            prot_a_string:encode(Data)
+        ])
+    ).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").

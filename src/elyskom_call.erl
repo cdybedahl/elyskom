@@ -131,7 +131,7 @@ make_args(change_what_i_am_doing) -> [prot_a_string];
 %% make_args(create_anonymous_text) -> 87;
 %% make_args(create_conf) -> 88;
 %% make_args(create_person) -> 89;
-%% make_args(create_text) -> 86;
+make_args(create_text) -> [prot_a_string, [prot_a_misc_info], [prot_a_aux_item]];
 make_args(delete_conf) -> [prot_a_integer];
 make_args(delete_text) -> [prot_a_integer];
 make_args(disconnect) -> [prot_a_integer];
