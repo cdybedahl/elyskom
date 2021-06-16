@@ -1,5 +1,7 @@
 -module(elyskom_call).
 
+-include("elyskom.hrl").
+
 -export([make/2]).
 -export([response/2]).
 
@@ -121,8 +123,8 @@ make_args(login) -> [prot_a_integer, prot_a_string, prot_a_bool];
 make_args(accept_async) -> [[prot_a_integer]];
 make_args(add_comment) -> [prot_a_integer, prot_a_integer];
 make_args(add_footnote) -> [prot_a_integer, prot_a_integer];
-%% make_args(add_member) -> 100;
-%% make_args(add_recipient) -> 30;
+make_args(add_member) -> [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_membership];
+make_args(add_recipient) -> [prot_a_integer, prot_a_integer, prot_a_info];
 make_args(change_conference) -> [prot_a_integer];
 make_args(change_name) -> [prot_a_integer, prot_a_string];
 make_args(change_what_i_am_doing) -> [prot_a_string];

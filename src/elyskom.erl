@@ -12,6 +12,8 @@
 -export([who_is_on_dynamic/4]).
 -export([lookup_z_name/4]).
 -export([re_z_lookup/4]).
+-export([add_member/6]).
+-export([add_recipient/4]).
 
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
@@ -53,3 +55,9 @@ lookup_z_name(Pid, Name, WantPers, WantConfs) ->
 
 re_z_lookup(Pid, Name, WantPers, WantConfs) ->
     gen_statem:call(Pid, [re_z_lookup, Name, WantPers, WantConfs]).
+
+add_member(Pid, ConfNo, PersNo, Priority, Where, Type) ->
+    gen_statem:call(Pid, [add_member, ConfNo, PersNo, Priority, Where, Type]).
+
+add_recipient(Pid, TextNo, ConfNo, Type) ->
+    gen_statem:call(Pid, [add_recipient, TextNo, ConfNo, Type]).

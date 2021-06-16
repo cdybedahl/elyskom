@@ -3,6 +3,8 @@
 -include("elyskom.hrl").
 
 -export([parse/1]).
+-export([to_int/1]).
+-export([encode/1]).
 
 parse([<<"0">>, Integer | Tail]) ->
     {{recpt, ?b2i(Integer)}, Tail};
@@ -28,3 +30,20 @@ parse([<<"9">> | Tail]) ->
     {{sent_at, Time}, Rest};
 parse([<<"15">>, Integer | Tail]) ->
     {{bcc_recpt, ?b2i(Integer)}, Tail}.
+
+encode({Type, Payload}) ->
+    EncodedType = to_int(Type),
+    EncodedPayload = prot_a_integer:encode(Payload),
+    <<EncodedType/binary, " ", EncodedPayload/binary>>.
+
+to_int(recpt) -> <<"0">>;
+to_int(cc_recpt) -> <<"1">>;
+to_int(comm_to) -> <<"2">>;
+to_int(comm_in) -> <<"3">>;
+to_int(footn_to) -> <<"4">>;
+to_int(footn_in) -> <<"5">>;
+to_int(loc_no) -> <<"6">>;
+to_int(rec_time) -> <<"7">>;
+to_int(sent_by) -> <<"8">>;
+to_int(sent_at) -> <<"9">>;
+to_int(bcc_recpt) -> <<"15">>.
