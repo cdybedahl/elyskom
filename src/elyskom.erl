@@ -14,6 +14,7 @@
 -export([re_z_lookup/4]).
 -export([add_member/6]).
 -export([add_recipient/4]).
+-export([create_text/4]).
 
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
@@ -61,3 +62,6 @@ add_member(Pid, ConfNo, PersNo, Priority, Where, Type) ->
 
 add_recipient(Pid, TextNo, ConfNo, Type) ->
     gen_statem:call(Pid, [add_recipient, TextNo, ConfNo, Type]).
+
+create_text(Pid, Text, MiscInfos, AuxItems) ->
+    gen_statem:call(Pid, [create_text, Text, MiscInfos, AuxItems]).
