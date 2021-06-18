@@ -110,96 +110,186 @@ call_no(user_active) -> 82;
 call_no(who_am_i) -> 56.
 
 %%% Lists of argument types for calls
-make_args(re_z_lookup) -> [prot_a_string, prot_a_bool, prot_a_bool];
-make_args(lookup_z_name) -> [prot_a_string, prot_a_bool, prot_a_bool];
-make_args(who_is_on_dynamic) -> [prot_a_bool, prot_a_bool, prot_a_integer];
-make_args(get_text_stat) -> [prot_a_integer];
-make_args(get_time) -> [];
-make_args(get_text) -> [prot_a_integer, prot_a_integer, prot_a_integer];
-make_args(get_uconf_stat) -> [prot_a_integer];
-make_args(login) -> [prot_a_integer, prot_a_string, prot_a_bool];
-make_args(accept_async) -> [[prot_a_integer]];
-make_args(add_comment) -> [prot_a_integer, prot_a_integer];
-make_args(add_footnote) -> [prot_a_integer, prot_a_integer];
-make_args(add_member) -> [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_membership];
-make_args(add_recipient) -> [prot_a_integer, prot_a_integer, prot_a_info];
-make_args(change_conference) -> [prot_a_integer];
-make_args(change_name) -> [prot_a_integer, prot_a_string];
-make_args(change_what_i_am_doing) -> [prot_a_string];
-make_args(create_anonymous_text) -> [prot_a_string, [prot_a_misc_info], [prot_a_aux_item]];
-%% make_args(create_conf) -> 88;
-%% make_args(create_person) -> 89;
-make_args(create_text) -> [prot_a_string, [prot_a_misc_info], [prot_a_aux_item]];
-make_args(delete_conf) -> [prot_a_integer];
-make_args(delete_text) -> [prot_a_integer];
-make_args(disconnect) -> [prot_a_integer];
-make_args(enable) -> [prot_a_integer];
-make_args(find_next_conf_no) -> [prot_a_integer];
-make_args(find_next_text_no) -> [prot_a_integer];
-make_args(find_previous_conf_no) -> [prot_a_integer];
-make_args(find_previous_text_no) -> [prot_a_integer];
-make_args(first_unused_conf_no) -> [];
-make_args(first_unused_text_no) -> [];
-make_args(get_boottime_info) -> [];
-make_args(get_client_name) -> [prot_a_integer];
-make_args(get_client_version) -> [prot_a_integer];
-make_args(get_collate_table) -> [];
-make_args(get_conf_stat) -> [prot_a_integer];
-make_args(get_info) -> [];
-%% make_args(get_last_text) -> 58;
-make_args(get_marks) -> [];
-make_args(get_members) -> [prot_a_integer, prot_a_integer, prot_a_integer];
-make_args(get_membership) -> [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_bool, prot_a_integer];
-make_args(get_person_stat) -> [prot_a_integer];
-make_args(get_static_session_info) -> [prot_a_integer];
-make_args(get_stats) -> [prot_a_string];
-make_args(get_stats_description) -> [];
-make_args(get_unread_confs) -> [prot_a_integer];
-make_args(get_version_info) -> [];
-make_args(local_to_global) -> [prot_a_integer, prot_a_integer, prot_a_integer];
-make_args(local_to_global_reverse) -> [prot_a_integer, prot_a_integer, prot_a_integer];
-make_args(logout) -> [];
-make_args(map_created_texts) -> [prot_a_integer, prot_a_integer, prot_a_integer];
-make_args(map_created_texts_reverse) -> [prot_a_integer, prot_a_integer, prot_a_integer];
-make_args(mark_as_read) -> [prot_a_integer, [prot_a_integer]];
-make_args(mark_as_unread) -> [prot_a_integer, prot_a_integer];
-make_args(mark_text) -> [prot_a_integer, prot_a_integer];
-%% make_args(modify_conf_info) -> 93;
-%% make_args(modify_system_info) -> 95;
-%% make_args(modify_text_info) -> 92;
-make_args(query_async) -> [];
-make_args(query_predefined_aux_items) -> [];
-make_args(query_read_texts) -> [prot_a_integer, prot_a_integer, prot_a_bool, prot_a_integer];
-make_args(send_message) -> [prot_a_integer, prot_a_string];
-make_args(set_client_version) -> [prot_a_string, prot_a_string];
-%% make_args(set_conf_type) -> 21;
-make_args(set_connection_time_format) -> [prot_a_bool];
-make_args(set_etc_motd) -> [prot_a_integer, prot_a_integer];
-make_args(set_garb_nice) -> [prot_a_integer, prot_a_integer];
-%% make_args(set_info) -> 79;
-make_args(set_keep_commented) -> [prot_a_integer, prot_a_integer];
-make_args(set_last_read) -> [prot_a_integer, prot_a_integer];
-%% make_args(set_membership_type) -> 102;
-make_args(set_motd_of_lyskom) -> [prot_a_integer];
-make_args(set_passwd) -> [prot_a_integer, prot_a_string, prot_a_string];
-make_args(set_permitted_submitters) -> [prot_a_integer, prot_a_integer];
-%% make_args(set_pers_flags) -> 106;
-make_args(set_presentation) -> [prot_a_integer, prot_a_integer];
-%% make_args(set_priv_bits) -> 7;
-%% make_args(set_read_ranges) -> 110;
-make_args(set_super_conf) -> [prot_a_integer, prot_a_integer];
-make_args(set_supervisor) -> [prot_a_integer, prot_a_integer];
-make_args(set_unread) -> [prot_a_integer, prot_a_integer];
-make_args(set_user_area) -> [prot_a_integer, prot_a_integer];
-make_args(shutdown_kom) -> [prot_a_integer];
-make_args(sub_comment) -> [prot_a_integer, prot_a_integer];
-make_args(sub_footnote) -> [prot_a_integer, prot_a_integer];
-make_args(sub_member) -> [prot_a_integer, prot_a_integer];
-make_args(sub_recipient) -> [prot_a_integer, prot_a_integer];
-make_args(sync_kom) -> [];
-make_args(unmark_text) -> [prot_a_integer];
-make_args(user_active) -> [];
-make_args(who_am_i) -> [prot_a_integer].
+make_args(re_z_lookup) ->
+    [prot_a_string, prot_a_bool, prot_a_bool];
+make_args(lookup_z_name) ->
+    [prot_a_string, prot_a_bool, prot_a_bool];
+make_args(who_is_on_dynamic) ->
+    [prot_a_bool, prot_a_bool, prot_a_integer];
+make_args(get_text_stat) ->
+    [prot_a_integer];
+make_args(get_time) ->
+    [];
+make_args(get_text) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer];
+make_args(get_uconf_stat) ->
+    [prot_a_integer];
+make_args(login) ->
+    [prot_a_integer, prot_a_string, prot_a_bool];
+make_args(accept_async) ->
+    [[prot_a_integer]];
+make_args(add_comment) ->
+    [prot_a_integer, prot_a_integer];
+make_args(add_footnote) ->
+    [prot_a_integer, prot_a_integer];
+make_args(add_member) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_membership];
+make_args(add_recipient) ->
+    [prot_a_integer, prot_a_integer, prot_a_info];
+make_args(change_conference) ->
+    [prot_a_integer];
+make_args(change_name) ->
+    [prot_a_integer, prot_a_string];
+make_args(change_what_i_am_doing) ->
+    [prot_a_string];
+make_args(create_anonymous_text) ->
+    [prot_a_string, [prot_a_misc_info], [prot_a_aux_item]];
+make_args(create_conf) ->
+    [prot_a_string, prot_a_extended_conf, [prot_a_aux_item]];
+make_args(create_person) ->
+    [prot_a_string, prot_a_string, prot_a_personal_flags, [prot_a_aux_item]];
+make_args(create_text) ->
+    [prot_a_string, [prot_a_misc_info], [prot_a_aux_item]];
+make_args(delete_conf) ->
+    [prot_a_integer];
+make_args(delete_text) ->
+    [prot_a_integer];
+make_args(disconnect) ->
+    [prot_a_integer];
+make_args(enable) ->
+    [prot_a_integer];
+make_args(find_next_conf_no) ->
+    [prot_a_integer];
+make_args(find_next_text_no) ->
+    [prot_a_integer];
+make_args(find_previous_conf_no) ->
+    [prot_a_integer];
+make_args(find_previous_text_no) ->
+    [prot_a_integer];
+make_args(first_unused_conf_no) ->
+    [];
+make_args(first_unused_text_no) ->
+    [];
+make_args(get_boottime_info) ->
+    [];
+make_args(get_client_name) ->
+    [prot_a_integer];
+make_args(get_client_version) ->
+    [prot_a_integer];
+make_args(get_collate_table) ->
+    [];
+make_args(get_conf_stat) ->
+    [prot_a_integer];
+make_args(get_info) ->
+    [];
+make_args(get_last_text) ->
+    [prot_a_time];
+make_args(get_marks) ->
+    [];
+make_args(get_members) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer];
+make_args(get_membership) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_bool, prot_a_integer];
+make_args(get_person_stat) ->
+    [prot_a_integer];
+make_args(get_static_session_info) ->
+    [prot_a_integer];
+make_args(get_stats) ->
+    [prot_a_string];
+make_args(get_stats_description) ->
+    [];
+make_args(get_unread_confs) ->
+    [prot_a_integer];
+make_args(get_version_info) ->
+    [];
+make_args(local_to_global) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer];
+make_args(local_to_global_reverse) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer];
+make_args(logout) ->
+    [];
+make_args(map_created_texts) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer];
+make_args(map_created_texts_reverse) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer];
+make_args(mark_as_read) ->
+    [prot_a_integer, [prot_a_integer]];
+make_args(mark_as_unread) ->
+    [prot_a_integer, prot_a_integer];
+make_args(mark_text) ->
+    [prot_a_integer, prot_a_integer];
+make_args(modify_conf_info) ->
+    [prot_a_integer, [prot_a_integer], [prot_a_aux_item]];
+make_args(modify_system_info) ->
+    [[prot_a_integer], [prot_a_aux_item]];
+make_args(modify_text_info) ->
+    [prot_a_integer, [prot_a_integer], [prot_a_aux_item]];
+make_args(query_async) ->
+    [];
+make_args(query_predefined_aux_items) ->
+    [];
+make_args(query_read_texts) ->
+    [prot_a_integer, prot_a_integer, prot_a_bool, prot_a_integer];
+make_args(send_message) ->
+    [prot_a_integer, prot_a_string];
+make_args(set_client_version) ->
+    [prot_a_string, prot_a_string];
+make_args(set_conf_type) ->
+    [prot_a_integer, prot_a_extended_conf];
+make_args(set_connection_time_format) ->
+    [prot_a_bool];
+make_args(set_etc_motd) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_garb_nice) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_info) ->
+    [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer];
+make_args(set_keep_commented) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_last_read) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_membership_type) ->
+    [prot_a_integer, prot_a_integer, prot_a_membership];
+make_args(set_motd_of_lyskom) ->
+    [prot_a_integer];
+make_args(set_passwd) ->
+    [prot_a_integer, prot_a_string, prot_a_string];
+make_args(set_permitted_submitters) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_pers_flags) ->
+    [prot_a_integer, prot_a_personal_flags];
+make_args(set_presentation) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_priv_bits) ->
+    [prot_a_integer, prot_a_priv_bits];
+make_args(set_read_ranges) ->
+    [prot_a_integer, [prot_a_read_range]];
+make_args(set_super_conf) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_supervisor) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_unread) ->
+    [prot_a_integer, prot_a_integer];
+make_args(set_user_area) ->
+    [prot_a_integer, prot_a_integer];
+make_args(shutdown_kom) ->
+    [prot_a_integer];
+make_args(sub_comment) ->
+    [prot_a_integer, prot_a_integer];
+make_args(sub_footnote) ->
+    [prot_a_integer, prot_a_integer];
+make_args(sub_member) ->
+    [prot_a_integer, prot_a_integer];
+make_args(sub_recipient) ->
+    [prot_a_integer, prot_a_integer];
+make_args(sync_kom) ->
+    [];
+make_args(unmark_text) ->
+    [prot_a_integer];
+make_args(user_active) ->
+    [];
+make_args(who_am_i) ->
+    [prot_a_integer].
 
 %%% How to turn returned lists from calls into something useful
 response(create_anonymous_text, Args) -> one_arg(prot_a_integer, Args);
