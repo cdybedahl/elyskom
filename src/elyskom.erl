@@ -15,6 +15,7 @@
 -export([add_member/6]).
 -export([add_recipient/4]).
 -export([create_text/4]).
+-export([create_anonymous_text/4]).
 
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
@@ -65,3 +66,6 @@ add_recipient(Pid, TextNo, ConfNo, Type) ->
 
 create_text(Pid, Text, MiscInfos, AuxItems) ->
     gen_statem:call(Pid, [create_text, Text, MiscInfos, AuxItems]).
+
+create_anonymous_text(Pid, Text, MiscInfos, AuxItems) ->
+    gen_statem:call(Pid, [create_anonymous_text, Text, MiscInfos, AuxItems]).

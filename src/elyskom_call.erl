@@ -1,7 +1,5 @@
 -module(elyskom_call).
 
--include("elyskom.hrl").
-
 -export([make/2]).
 -export([response/2]).
 
@@ -128,7 +126,7 @@ make_args(add_recipient) -> [prot_a_integer, prot_a_integer, prot_a_info];
 make_args(change_conference) -> [prot_a_integer];
 make_args(change_name) -> [prot_a_integer, prot_a_string];
 make_args(change_what_i_am_doing) -> [prot_a_string];
-%% make_args(create_anonymous_text) -> 87;
+make_args(create_anonymous_text) -> [prot_a_string, [prot_a_misc_info], [prot_a_aux_item]];
 %% make_args(create_conf) -> 88;
 %% make_args(create_person) -> 89;
 make_args(create_text) -> [prot_a_string, [prot_a_misc_info], [prot_a_aux_item]];

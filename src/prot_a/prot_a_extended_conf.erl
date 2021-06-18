@@ -1,17 +1,17 @@
--module(prot_a_aux_item_flags).
+-module(prot_a_extended_conf).
 
 -export([parse/1]).
 -export([encode/1]).
 
 -define(FLAGS, [
-    deleted,
-    inherit,
+    rd_prot,
+    original,
     secret,
-    hide_creator,
-    dont_garb,
+    letterbox,
+    allow_anonymous,
+    forbid_secret,
     reserved2,
-    reserved3,
-    reserved4
+    reserved3
 ]).
 
 parse(List) -> prot_a_bitstring:parse(List, ?FLAGS).
