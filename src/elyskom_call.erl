@@ -365,16 +365,35 @@ response(get_membership, Args) ->
     one_arg(prot_a_membership, Args);
 response(get_person_stat, Args) ->
     one_arg(prot_a_person, Args);
-%% response(get_static_session_info, Args) -> ;
-%% response(get_stats, Args) -> ;
-%% response(get_stats_description, Args) -> ;
-%% response(get_version_info, Args) -> ;
-%% response(local_to_global, Args) -> ;
-%% response(local_to_global_reverse, Args) -> ;
-%% response(map_created_texts, Args) -> ;
-%% response(map_created_texts_reverse, Args) -> ;
-%% response(query_read_texts, Args) -> ;
-%% response(get_boottime_info, Args) -> ;
+response(get_static_session_info, Args) ->
+    prot_a_args:parse([prot_a_string, prot_a_string, prot_a_string, prot_a_time], Args);
+response(get_stats, Args) ->
+    one_arg([prot_a_stats], Args);
+response(get_stats_description, Args) ->
+    one_arg(prot_a_stats_description, Args);
+response(get_version_info, Args) ->
+    prot_a_args:parse([prot_a_integer, prot_a_string, prot_a_string], Args);
+response(local_to_global, Args) ->
+    one_arg([[prot_a_text_mapping]], Args);
+response(local_to_global_reverse, Args) ->
+    one_arg([[prot_a_text_mapping]], Args);
+response(map_created_texts, Args) ->
+    one_arg([[prot_a_text_mapping]], Args);
+response(map_created_texts_reverse, Args) ->
+    one_arg([[prot_a_text_mapping]], Args);
+response(query_read_texts, Args) ->
+    one_arg([prot_a_membership], Args);
+response(get_boottime_info, Args) ->
+    prot_a_args:parse([
+        prot_a_time,
+        prot_a_time,
+        prot_a_string,
+        prot_a_integer,
+        prot_a_integer,
+        prot_a_integer,
+        prot_a_integer,
+        prot_a_integer
+    ], Args);
 response(_CallName, []) ->
     ok.
 

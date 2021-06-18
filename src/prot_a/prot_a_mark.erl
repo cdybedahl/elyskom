@@ -5,13 +5,5 @@
 -export([parse/1]).
 -export([encode/1]).
 
-encode({TextNo, Type}) ->
-    F = ?i2b(TextNo),
-    L = ?i2b(Type),
-    <<F/binary, " ", L/binary>>.
-
-parse([TextNo, Type | Tail]) ->
-    {
-        {?b2i(TextNo), ?b2i(Type)},
-        Tail
-    }.
+encode(P) -> prot_a_pair:encode(P).
+parse(List) -> prot_a_pair:parse(List).
