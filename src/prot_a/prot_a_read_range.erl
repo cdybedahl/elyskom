@@ -10,7 +10,7 @@ encode({First, Last}) ->
     L = ?i2b(Last),
     <<F/binary, " ", L/binary>>.
 
-parse([{First, Last} | Tail]) ->
+parse([First, Last | Tail]) ->
     {
         {?b2i(First), ?b2i(Last)},
         Tail
