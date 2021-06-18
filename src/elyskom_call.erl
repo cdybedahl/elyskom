@@ -342,7 +342,6 @@ response(get_text, Args) ->
     one_arg(prot_a_string, Args);
 response(get_uconf_stat, Args) ->
     one_arg(prot_a_uconference, Args);
-%% response(get_boottime_info, Args) -> ;
 response(get_conf_stat, Args) ->
     one_arg(prot_a_conference, Args);
 response(get_info, Args) ->
@@ -360,6 +359,7 @@ response(get_info, Args) ->
     );
 response(get_marks, Args) ->
     one_arg([prot_a_mark], Args);
+%% response(get_boottime_info, Args) -> ;
 %% response(get_members, Args) -> ;
 %% response(get_membership, Args) -> ;
 %% response(get_person_stat, Args) -> ;
