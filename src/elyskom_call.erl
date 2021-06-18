@@ -133,7 +133,7 @@ make_args(add_comment) ->
 make_args(add_footnote) ->
     [prot_a_integer, prot_a_integer];
 make_args(add_member) ->
-    [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_membership];
+    [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_membership_type];
 make_args(add_recipient) ->
     [prot_a_integer, prot_a_integer, prot_a_info];
 make_args(change_conference) ->
@@ -249,7 +249,7 @@ make_args(set_keep_commented) ->
 make_args(set_last_read) ->
     [prot_a_integer, prot_a_integer];
 make_args(set_membership_type) ->
-    [prot_a_integer, prot_a_integer, prot_a_membership];
+    [prot_a_integer, prot_a_integer, prot_a_membership_type];
 make_args(set_motd_of_lyskom) ->
     [prot_a_integer];
 make_args(set_passwd) ->
@@ -359,10 +359,12 @@ response(get_info, Args) ->
     );
 response(get_marks, Args) ->
     one_arg([prot_a_mark], Args);
-%% response(get_boottime_info, Args) -> ;
-%% response(get_members, Args) -> ;
-%% response(get_membership, Args) -> ;
-%% response(get_person_stat, Args) -> ;
+response(get_members, Args) ->
+    one_arg([prot_a_member], Args);
+response(get_membership, Args) ->
+    one_arg(prot_a_membership, Args);
+response(get_person_stat, Args) ->
+    one_arg(prot_a_person, Args);
 %% response(get_static_session_info, Args) -> ;
 %% response(get_stats, Args) -> ;
 %% response(get_stats_description, Args) -> ;
@@ -372,6 +374,7 @@ response(get_marks, Args) ->
 %% response(map_created_texts, Args) -> ;
 %% response(map_created_texts_reverse, Args) -> ;
 %% response(query_read_texts, Args) -> ;
+%% response(get_boottime_info, Args) -> ;
 response(_CallName, []) ->
     ok.
 

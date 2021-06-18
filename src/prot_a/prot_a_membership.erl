@@ -1,25 +1,31 @@
 -module(prot_a_membership).
 
--export([encode/1]).
+-export([parse/1]).
 
--define(FLAGS, [
-    invitation,
-    passive,
-    secret,
-    passive_message_invert,
-    reserved2,
-    reserved3,
-    reserved4,
-    reserved5
-]).
-
-encode(Map) -> prot_a_bitstring:encode(Map, ?FLAGS).
-
--ifdef(TEST).
--include_lib("eunit/include/eunit.hrl").
-
-encode_test() ->
-    Res = encode(#{secret => true}),
-    ?assertEqual(<<"00100000">>, Res).
-
--endif.
+parse(List) ->
+    {[Position, LastTimeRead, Conference, Priority, ReadRanges, AddedBy, AddedAt, Type], Rest} = prot_a_args:parse(
+        [
+            prot_a_integer,
+            prot_a_time,
+            prot_a_integer,
+            prot_a_integer,
+            [prot_a_read_range],
+            prot_a_integer,
+            prot_a_time,
+            prot_a_membership_type
+        ],
+        List
+    ),
+    {
+        #{
+            position => Position,
+            last_time_read => LastTimeRead,
+            conference => Conference,
+            priority => Priority,
+            read_ranges => ReadRanges,
+            added_by => AddedBy,
+            added_at => AddedAt,
+            type => Type
+        },
+        Rest
+    }.
