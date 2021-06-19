@@ -3,10 +3,12 @@
 -export([parse/2]).
 -export([get/2]).
 
+-spec parse([atom() | list(atom())], [binary()]) -> [any()].
 parse(Types, ArgList) ->
     {Arguments, []} = get(Types, ArgList),
     Arguments.
 
+-spec get([atom() | list(atom())], [binary()]) -> {[any()], [binary()]}.
 get(Types, ArgList) ->
     {Tail, Arguments} = lists:foldl(
         fun(Type, {ArgL, ResL}) ->
@@ -18,6 +20,7 @@ get(Types, ArgList) ->
     ),
     {lists:reverse(Arguments), Tail}.
 
+-spec parse_type([atom()] | atom(), [binary()]) -> any().
 parse_type([Type], ArgL) ->
     prot_a_array:parse(ArgL, Type);
 parse_type(Type, ArgL) when is_atom(Type) ->

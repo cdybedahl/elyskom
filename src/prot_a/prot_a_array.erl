@@ -5,6 +5,7 @@
 -export([parse/2]).
 -export([encode/2]).
 
+-spec parse([binary()], atom()) -> {[any()], [binary()]}.
 parse([<<"0">>, <<"*">> | Rest], _Type) ->
     {[], Rest};
 parse([Count, <<"*">> | Rest], Type) ->
@@ -24,6 +25,7 @@ parse([RawCount, <<"{">> | Rest0], Type) ->
     [<<"}">> | Rest2] = Rest1,
     {lists:reverse(Args), Rest2}.
 
+-spec encode(atom(), [any()]) -> iodata().
 encode(Type, List) ->
     Count = ?i2b(length(List)),
     Items = lists:map(fun Type:encode/1, List),

@@ -3,6 +3,7 @@
 -export([make/2]).
 -export([response/2]).
 
+-spec make(atom(), list()) -> iodata().
 make(CallName, Args) ->
     Pattern = make_args(CallName),
     Pairs = [call_no(CallName) | Args],
@@ -18,6 +19,7 @@ make(CallName, Args) ->
     lists:join(<<" ">>, Elements).
 
 %%% Protocol A call numbers
+-spec call_no(atom()) -> integer().
 call_no(re_z_lookup) -> 74;
 call_no(lookup_z_name) -> 76;
 call_no(who_is_on_dynamic) -> 83;
@@ -110,6 +112,7 @@ call_no(user_active) -> 82;
 call_no(who_am_i) -> 56.
 
 %%% Lists of argument types for calls
+-spec make_args(atom()) -> [atom()].
 make_args(re_z_lookup) ->
     [prot_a_string, prot_a_bool, prot_a_bool];
 make_args(lookup_z_name) ->
@@ -292,6 +295,7 @@ make_args(who_am_i) ->
     [prot_a_integer].
 
 %%% How to turn returned lists from calls into something useful
+-spec response(atom(), list()) -> any().
 response(create_anonymous_text, Args) ->
     one_arg(prot_a_integer, Args);
 response(create_conf, Args) ->
@@ -374,26 +378,29 @@ response(get_stats_description, Args) ->
 response(get_version_info, Args) ->
     prot_a_args:parse([prot_a_integer, prot_a_string, prot_a_string], Args);
 response(local_to_global, Args) ->
-    one_arg([[prot_a_text_mapping]], Args);
+    one_arg([prot_a_text_mapping], Args);
 response(local_to_global_reverse, Args) ->
-    one_arg([[prot_a_text_mapping]], Args);
+    one_arg([prot_a_text_mapping], Args);
 response(map_created_texts, Args) ->
-    one_arg([[prot_a_text_mapping]], Args);
+    one_arg([prot_a_text_mapping], Args);
 response(map_created_texts_reverse, Args) ->
-    one_arg([[prot_a_text_mapping]], Args);
+    one_arg([prot_a_text_mapping], Args);
 response(query_read_texts, Args) ->
     one_arg([prot_a_membership], Args);
 response(get_boottime_info, Args) ->
-    prot_a_args:parse([
-        prot_a_time,
-        prot_a_time,
-        prot_a_string,
-        prot_a_integer,
-        prot_a_integer,
-        prot_a_integer,
-        prot_a_integer,
-        prot_a_integer
-    ], Args);
+    prot_a_args:parse(
+        [
+            prot_a_time,
+            prot_a_time,
+            prot_a_string,
+            prot_a_integer,
+            prot_a_integer,
+            prot_a_integer,
+            prot_a_integer,
+            prot_a_integer
+        ],
+        Args
+    );
 response(_CallName, []) ->
     ok.
 
