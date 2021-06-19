@@ -1,0 +1,5 @@
+@author Calle Dybedahl <calle@dybedahl.se>
+@copyright 2021 Calle Dybedahl
+@version 0.5.0
+@title eLyskom, a Protocol A library
+@doc The eLyskom library implements the communication protocol needed to talk to a LysKOM server.
