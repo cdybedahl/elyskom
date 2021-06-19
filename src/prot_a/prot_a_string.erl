@@ -3,10 +3,12 @@
 -export([encode/1]).
 -export([parse/1]).
 
+-spec parse([binary()]) -> {binary(), [binary()]}.
 parse([Str | Tail]) ->
     U = unicode:characters_to_binary(Str, latin1, utf8),
     {U, Tail}.
 
+-spec encode(iodata()) -> binary() | none().
 encode(List) when is_list(List) ->
     encode(iolist_to_binary(List));
 encode(String) when is_binary(String) ->

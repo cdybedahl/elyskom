@@ -1,8 +1,7 @@
 {application, elyskom, [
-    {description, "An OTP application"},
-    {vsn, "0.1.0"},
+    {description, "Client library for LysKOM"},
+    {vsn, "0.5.0"},
     {registered, []},
-    {mod, {elyskom_app, []}},
     {applications, [
         kernel,
         stdlib,
