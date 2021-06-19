@@ -4,12 +4,16 @@
 -export([parse/1]).
 
 parse([Str | Tail]) ->
-    {Str, Tail}.
+    U = unicode:characters_to_binary(Str, latin1, utf8),
+    {U, Tail}.
 
-encode(String) when is_binary(String) ->
-    Len = integer_to_binary(byte_size(String)),
-    <<Len/binary, "H", String/binary>>;
 encode(List) when is_list(List) ->
-    String = iolist_to_binary(List),
-    Len = integer_to_binary(byte_size(String)),
-    <<Len/binary, "H", String/binary>>.
+    encode(iolist_to_binary(List));
+encode(String) when is_binary(String) ->
+    case unicode:characters_to_binary(String, utf8, latin1) of
+        Utf8 when is_binary(Utf8) ->
+            Len = integer_to_binary(byte_size(Utf8)),
+            <<Len/binary, "H", Utf8/binary>>;
+        {error, _, _} ->
+            throw(io_lib:format("Could not convert to Latin-1: ~tp", [String]))
+    end.

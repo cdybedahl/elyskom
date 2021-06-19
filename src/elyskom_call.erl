@@ -339,7 +339,7 @@ response(get_text_stat, Args) ->
 response(get_time, Args) ->
     one_arg(prot_a_time, Args);
 response(get_text, Args) ->
-    one_arg(prot_a_string, Args);
+    one_arg(prot_a_data, Args);
 response(get_uconf_stat, Args) ->
     one_arg(prot_a_uconference, Args);
 response(get_conf_stat, Args) ->
