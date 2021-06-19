@@ -321,7 +321,7 @@ response(get_collate_table, Args) ->
 response(get_last_text, Args) ->
     one_arg(prot_a_integer, Args);
 response(get_unread_confs, Args) ->
-    one_arg([prot_a_string], Args);
+    one_arg([prot_a_integer], Args);
 response(query_async, Args) ->
     one_arg([prot_a_integer], Args);
 response(query_predefined_aux_items, Args) ->

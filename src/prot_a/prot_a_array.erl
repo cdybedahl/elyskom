@@ -7,6 +7,9 @@
 
 parse([<<"0">>, <<"*">> | Rest], _Type) ->
     {[], Rest};
+parse([Count, <<"*">> | Rest], Type) ->
+    logger:warning("Non-empty array with no content: ~p of type ~p", [Count, Type]),
+    {[], Rest};
 parse([RawCount, <<"{">> | Rest0], Type) ->
     Count = binary_to_integer(RawCount),
     {Args, Rest1} =

@@ -3,7 +3,7 @@
 -export([parse/1]).
 
 parse(List) ->
-    {[Position, LastTimeRead, Conference, Priority, ReadRanges, AddedBy, AddedAt, Type], Rest} = prot_a_args:parse(
+    {[Position, LastTimeRead, Conference, Priority, ReadRanges, AddedBy, AddedAt, Type], Rest} = prot_a_args:get(
         [
             prot_a_integer,
             prot_a_time,

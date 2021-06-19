@@ -25,7 +25,7 @@ parse(List) ->
         ],
         Rest
     } =
-        prot_a_args:parse(
+        prot_a_args:get(
             [
                 prot_a_string,
                 prot_a_priv_bits,
