@@ -11,13 +11,13 @@
     created_at => prot_a_time:t(),
     flags => prot_a_aux_item_flags:t(),
     inherit_limit => pos_integer(),
-    data => unicode:unicode_binary()
+    data => prot_a_string:t()
 }.
 -type input() :: #{
     tag => pos_integer(),
     flags => prot_a_aux_item_flags:t(),
     inherit_limit => pos_integer(),
-    data => unicode:unicode_binary()
+    data => prot_a_string:t()
 }.
 -export_type([t/0, input/0]).
 

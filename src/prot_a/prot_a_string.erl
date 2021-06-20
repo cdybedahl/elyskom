@@ -3,7 +3,10 @@
 -export([encode/1]).
 -export([parse/1]).
 
--spec parse([binary()]) -> {unicode:unicode_binary(), [binary()]}.
+-type t() :: unicode:unicode_binary().
+-export_type([t/0]).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse([Str | Tail]) ->
     U = unicode:characters_to_binary(Str, latin1, utf8),
     {U, Tail}.

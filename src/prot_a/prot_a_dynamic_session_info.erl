@@ -8,7 +8,7 @@
     working_conference => pos_integer(),
     idle_time => pos_integer(),
     flags => prot_a_session_flags:t(),
-    what_am_i_doing => unicode:unicode_binary()
+    what_am_i_doing => prot_a_string:t()
 }.
 -export_type([t/0]).
 
