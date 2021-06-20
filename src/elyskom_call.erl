@@ -293,7 +293,7 @@ make_args(unmark_text) ->
 make_args(user_active) ->
     [];
 make_args(who_am_i) ->
-    [prot_a_integer].
+    [].
 
 %%% How to turn returned lists from calls into something useful
 -spec response(atom(), list()) -> any().
