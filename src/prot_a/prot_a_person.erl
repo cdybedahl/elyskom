@@ -2,6 +2,28 @@
 
 -export([parse/1]).
 
+-type t() :: #{
+    username => prot_a_string:t(),
+    privileges => prot_a_priv_bits:t(),
+    flags => prot_a_personal_flags:t(),
+    last_login => prot_a_time:t(),
+    user_area => pos_integer(),
+    total_time_present => pos_integer(),
+    sessions => pos_integer(),
+    created_lines => pos_integer(),
+    created_bytes => pos_integer(),
+    read_texts => pos_integer(),
+    no_of_text_fetches => pos_integer(),
+    created_persons => pos_integer(),
+    created_confs => pos_integer(),
+    first_created_local_no => pos_integer(),
+    no_of_created_texts => pos_integer(),
+    no_of_marks => pos_integer(),
+    no_of_confs => pos_integer()
+}.
+-export_type([t/0]).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse(List) ->
     {
         [

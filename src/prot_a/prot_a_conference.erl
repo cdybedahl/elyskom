@@ -2,6 +2,28 @@
 
 -export([parse/1]).
 
+-type t() :: #{
+    name => prot_a_string:t(),
+    type => prot_a_extended_conf:any_conf(),
+    creation_time => prot_a_time:t(),
+    last_written => prot_a_time:t(),
+    creator => pos_integer(),
+    presentation => pos_integer(),
+    supervisor => pos_integer(),
+    permitted_submitters => pos_integer(),
+    super_conf => pos_integer(),
+    msg_of_day => pos_integer(),
+    nice => pos_integer(),
+    keeo_commented => pos_integer(),
+    no_of_members => pos_integer(),
+    first_local_no => pos_integer(),
+    no_of_texts => pos_integer(),
+    expire => pos_integer(),
+    aux_items => [prot_a_aux_items:input()]
+}.
+-export_type([t/0]).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse(List) ->
     {
         [

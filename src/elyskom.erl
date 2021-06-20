@@ -143,78 +143,117 @@ get_time(Pid) ->
 who_is_on_dynamic(Pid, WantVisible, WantInvisible, ActiveLast) ->
     gen_statem:call(Pid, [who_is_on_dynamic, WantVisible, WantInvisible, ActiveLast]).
 
+-spec lookup_z_name(pid(), prot_a_string:t(), boolean(), boolean()) ->
+    [prot_a_extended_conf:any_conf()] | prot_a_error:t().
 lookup_z_name(Pid, Name, WantPers, WantConfs) ->
     gen_statem:call(Pid, [lookup_z_name, Name, WantPers, WantConfs]).
 
+-spec re_z_lookup(pid(), prot_a_string:t(), boolean(), boolean()) ->
+    [prot_a_extended_conf:any_conf()] | prot_a_error:t().
 re_z_lookup(Pid, Name, WantPers, WantConfs) ->
     gen_statem:call(Pid, [re_z_lookup, Name, WantPers, WantConfs]).
 
+-spec add_member(pid(), pos_integer(), pos_integer(), pos_integer(), pos_integer(), prot_a_membership_type:t()) ->
+    ok | prot_a_error:t().
 add_member(Pid, ConfNo, PersNo, Priority, Where, Type) ->
     gen_statem:call(Pid, [add_member, ConfNo, PersNo, Priority, Where, Type]).
 
+-spec add_recipient(pid(), pos_integer(), pos_integer(), prot_a_info:t()) -> ok | prot_a_error:t().
 add_recipient(Pid, TextNo, ConfNo, Type) ->
     gen_statem:call(Pid, [add_recipient, TextNo, ConfNo, Type]).
 
+-spec create_text(pid(), binary(), [prot_a_misc_info:t()], [prot_a_aux_item:input()]) ->
+    pos_integer() | prot_a_error:t().
 create_text(Pid, Text, MiscInfos, AuxItems) ->
     gen_statem:call(Pid, [create_text, Text, MiscInfos, AuxItems]).
 
+-spec create_anonymous_text(pid(), binary(), [prot_a_misc_info:t()], [prot_a_aux_item:input()]) ->
+    pos_integer() | prot_a_error:t().
 create_anonymous_text(Pid, Text, MiscInfos, AuxItems) ->
     gen_statem:call(Pid, [create_anonymous_text, Text, MiscInfos, AuxItems]).
 
+-spec create_conf(pid(), binary(), prot_a_extended_conf:any_conf(), [prot_a_aux_item:t()]) ->
+    pos_integer() | prot_a_error:t().
 create_conf(Pid, Name, ConfType, AuxItems) ->
     gen_statem:call(Pid, [create_conf, Name, ConfType, AuxItems]).
 
+-spec create_person(pid(), binary(), binary(), prot_a_personal_flags:t(), [prot_a_aux_item:t()]) ->
+    pos_integer() | prot_a_error:t().
 create_person(Pid, Name, Passwd, PersonalFlags, AuxItems) ->
     gen_statem:call(Pid, [create_person, Name, Passwd, PersonalFlags, AuxItems]).
 
 %% Generated:ish
+-spec add_comment(pid(), pos_integer(), pos_integer()) -> ok | prot_a_error:t().
 add_comment(Pid, TextNo, CommentTo) -> gen_statem:call(Pid, [add_comment, TextNo, CommentTo]).
 
+-spec add_footnote(pid(), pos_integer(), pos_integer()) -> ok | prot_a_error:t().
 add_footnote(Pid, TextNo, FootnoteTo) ->
     gen_statem:call(Pid, [add_footnote, TextNo, FootnoteTo]).
 
+-spec change_conference(pid(), pos_integer()) -> ok | prot_a_error:t().
 change_conference(Pid, ConfNo) -> gen_statem:call(Pid, [change_conference, ConfNo]).
 
+-spec change_name(pid(), pos_integer(), binary()) -> ok | prot_a_error:t().
 change_name(Pid, PersNo, Name) -> gen_statem:call(Pid, [change_name, PersNo, Name]).
 
+-spec change_what_i_am_doing(pid(), binary()) -> ok | prot_a_error:t().
 change_what_i_am_doing(Pid, What) -> gen_statem:call(Pid, [change_what_i_am_doing, What]).
 
+-spec delete_conf(pid(), pos_integer()) -> ok | prot_a_error:t().
 delete_conf(Pid, ConfNo) -> gen_statem:call(Pid, [delete_conf, ConfNo]).
 
+-spec delete_text(pid(), pos_integer()) -> ok | prot_a_error:t().
 delete_text(Pid, TextNo) -> gen_statem:call(Pid, [delete_text, TextNo]).
 
+-spec disconnect(pid(), pos_integer()) -> ok | prot_a_error:t().
 disconnect(Pid, SessionNo) -> gen_statem:call(Pid, [disconnect, SessionNo]).
 
+-spec enable(pid(), byte()) -> ok | prot_a_error:t().
 enable(Pid, Level) -> gen_statem:call(Pid, [enable, Level]).
 
+-spec find_next_conf_no(pid(), pos_integer()) -> pos_integer() | prot_a_error:t().
 find_next_conf_no(Pid, Start) -> gen_statem:call(Pid, [find_next_conf_no, Start]).
 
+-spec find_next_text_no(pid(), pos_integer()) -> pos_integer() | prot_a_error:t().
 find_next_text_no(Pid, Start) -> gen_statem:call(Pid, [find_next_text_no, Start]).
 
+-spec find_previous_conf_no(pid(), pos_integer()) -> pos_integer() | prot_a_error:t().
 find_previous_conf_no(Pid, Start) -> gen_statem:call(Pid, [find_previous_conf_no, Start]).
 
+-spec find_previous_text_no(pid(), pos_integer()) -> pos_integer() | prot_a_error:t().
 find_previous_text_no(Pid, Start) -> gen_statem:call(Pid, [find_previous_text_no, Start]).
 
+-spec get_client_name(pid(), pos_integer()) -> prot_a_string:t() | prot_a_error:t().
 get_client_name(Pid, SessionNo) -> gen_statem:call(Pid, [get_client_name, SessionNo]).
 
+-spec get_client_version(pid(), pos_integer()) -> prot_a_string:t() | prot_a_error:t().
 get_client_version(Pid, SessionNo) -> gen_statem:call(Pid, [get_client_version, SessionNo]).
 
+-spec get_conf_stat(pid(), pos_integer()) -> prot_a_conference:t() | prot_a_error:t().
 get_conf_stat(Pid, ConfNo) -> gen_statem:call(Pid, [get_conf_stat, ConfNo]).
 
+-spec get_last_text(pid(), prot_a_time:t()) -> pos_integer() | prot_a_error:t().
 get_last_text(Pid, When) -> gen_statem:call(Pid, [get_last_text, When]).
 
+-spec get_members(pid(), pos_integer(), pos_integer(), pos_integer()) -> [prot_a_member:t()] | prot_a_error:t().
 get_members(Pid, ConfNo, First, NoOfMembers) ->
     gen_statem:call(Pid, [get_members, ConfNo, First, NoOfMembers]).
 
+-spec get_membership(pid(), pos_integer(), pos_integer(), pos_integer(), boolean(), pos_integer()) ->
+    [prot_a_membership:t()] | prot_a_error:t().
 get_membership(Pid, PersNo, First, NoOfConf, WantReadRanges, MaxRanges) ->
     gen_statem:call(Pid, [get_membership, PersNo, First, NoOfConf, WantReadRanges, MaxRanges]).
 
+-spec get_person_stat(pid(), pos_integer()) -> prot_a_person:t() | prot_a_error:t().
 get_person_stat(Pid, PersNo) -> gen_statem:call(Pid, [get_person_stat, PersNo]).
 
+-spec get_static_session_info(pid(), pos_integer()) -> [prot_a_string:t() | prot_a_time:t()].
 get_static_session_info(Pid, SessionNo) -> gen_statem:call(Pid, [get_static_session_info, SessionNo]).
 
+-spec get_stats(pid(), prot_a_string:t()) -> [prot_a_stats:t()] | prot_a_error:t().
 get_stats(Pid, What) -> gen_statem:call(Pid, [get_stats, What]).
 
+-spec get_unread_confs(pid(), pos_integer()) -> [pos_integer()] | prot_a_error:t().
 get_unread_confs(Pid, PersNo) -> gen_statem:call(Pid, [get_unread_confs, PersNo]).
 
 local_to_global(Pid, ConfNo, FirstLocalNo, NoOfExistingTexts) ->

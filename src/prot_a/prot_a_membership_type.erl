@@ -13,6 +13,19 @@
     reserved5
 ]).
 
+-type t() :: #{
+    invitation => boolean(),
+    passive => boolean(),
+    secret => boolean(),
+    passive_message_invert => boolean(),
+    reserved2 => boolean(),
+    reserved3 => boolean(),
+    reserved4 => boolean(),
+    reserved5 => boolean()
+}.
+-export_type([t/0]).
+
+-spec encode(t()) -> iodata().
 encode(Map) -> prot_a_bitstring:encode(Map, ?FLAGS).
 
 -ifdef(TEST).
