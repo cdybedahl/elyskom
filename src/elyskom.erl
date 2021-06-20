@@ -138,6 +138,8 @@ get_text_stat(Pid, TextNo) ->
 get_time(Pid) ->
     gen_statem:call(Pid, [get_time]).
 
+-spec who_is_on_dynamic(pid(), boolean(), boolean(), non_neg_integer()) ->
+    [prot_a_dynamic_session_info:t()] | prot_a_error:t().
 who_is_on_dynamic(Pid, WantVisible, WantInvisible, ActiveLast) ->
     gen_statem:call(Pid, [who_is_on_dynamic, WantVisible, WantInvisible, ActiveLast]).
 

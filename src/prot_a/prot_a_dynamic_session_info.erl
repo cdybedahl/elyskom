@@ -2,14 +2,21 @@
 
 -export([parse/1]).
 
+-type t() :: #{
+    session_no => pos_integer(),
+    person => pos_integer(),
+    working_conference => pos_integer(),
+    idle_time => pos_integer(),
+    flags => prot_a_session_flags:t(),
+    what_am_i_doing => unicode:unicode_binary()
+}.
+-export_type([t/0]).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse(List) ->
-    {[Session, Person, Conference, IdleTime, RawFlags, What], Rest} = prot_a_args:get(
-        [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_bitstring, prot_a_string],
+    {[Session, Person, Conference, IdleTime, Flags, What], Rest} = prot_a_args:get(
+        [prot_a_integer, prot_a_integer, prot_a_integer, prot_a_integer, prot_a_session_flags, prot_a_string],
         List
-    ),
-    Flags = prot_a_bitstring:annotate(
-        [invisible, user_active_used, user_absent, reserved3, reserved4, reserved5, reserved6, reserved7],
-        RawFlags
     ),
     {
         #{
