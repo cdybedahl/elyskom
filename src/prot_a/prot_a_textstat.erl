@@ -2,6 +2,19 @@
 
 -export([parse/1]).
 
+-type t() :: #{
+    creation_time => prot_a_time:t(),
+    author => pos_integer(),
+    no_of_lines => pos_integer(),
+    no_of_chars => pos_integer(),
+    no_of_marks => pos_integer(),
+    misc_info => [prot_a_misc_info:t()],
+    aux_item => [prot_a_aux_item:t()]
+}.
+
+-export_type([t/0]).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse(List) ->
     {[CreationTime, Author, NoOfLines, NoOfChars, NoOfMarks, MiscInfo, AuxItem], Rest} =
         prot_a_args:get(

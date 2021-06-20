@@ -1,3 +1,6 @@
+%% @doc The primary interface module for the elyskom application.
+%% The functions in here are as straightforward translations as possible
+%% of the calls described in the Protocol A specification.
 -module(elyskom).
 
 -include("elyskom.hrl").
@@ -82,35 +85,56 @@
 -export([unmark_text/2]).
 -export([who_am_i/2]).
 
+%% @equiv new("kom.lysator.liu.se", 4894)
 new() ->
     new("kom.lysator.liu.se", ?TCP_PORT).
+
+%% @equiv new(Host, 4894)
 new(Host) ->
     new(Host, ?TCP_PORT).
+
+%% @doc Connect to the LysKOM server at the given host and port.
+%% If it takes more than ten seconds to connect to the server and
+%% establish communication, the connection will be broken and a
+%% timeout error returned.
+-spec new(inet:hostname() | inet:hostent(), pos_integer()) -> {ok, pid()} | {error, timeout}.
 new(Host, TcpPort) ->
     {ok, Pid} = elyskom_socket:start_link(Host, TcpPort),
     receive
         {elyskom, Pid, connected} -> {ok, Pid}
-    after 10000 -> {error, timeout}
+    after 10000 ->
+        gen_statem:stop(Pid),
+        {error, timeout}
     end.
 
+%% @doc Visibly log in the given user using the provided password.
+-spec login(pid(), pos_integer(), binary()) -> ok | prot_a_error:t().
 login(Pid, UserNo, Password) ->
     login(Pid, UserNo, Password, false).
 
+%% @doc Log in the given user using the provided password.
+%% If the final argument is true an invisible session will be used.
+-spec login(pid(), pos_integer(), binary(), boolean()) -> ok | prot_a_error:t().
 login(Pid, UserNo, Password, Invisible) ->
     gen_statem:call(Pid, [login, UserNo, Password, Invisible]).
 
+-spec accept_async(pid(), [pos_integer()]) -> ok | prot_a_error:t().
 accept_async(Pid, AsyncList) ->
     gen_statem:call(Pid, [accept_async, AsyncList]).
 
+-spec get_uconf_stat(pid(), pos_integer()) -> prot_a_uconference:t() | prot_a_error:t().
 get_uconf_stat(Pid, ConfNo) ->
     gen_statem:call(Pid, [get_uconf_stat, ConfNo]).
 
+-spec get_text(pid(), pos_integer(), pos_integer(), pos_integer()) -> binary() | prot_a_error:t().
 get_text(Pid, TextNo, StartPos, EndPos) ->
     gen_statem:call(Pid, [get_text, TextNo, StartPos, EndPos]).
 
+-spec get_text_stat(pid(), pos_integer()) -> prot_a_textstat:t() | prot_a_error:t().
 get_text_stat(Pid, TextNo) ->
     gen_statem:call(Pid, [get_text_stat, TextNo]).
 
+-spec get_time(pid()) -> prot_a_time:t().
 get_time(Pid) ->
     gen_statem:call(Pid, [get_time]).
 

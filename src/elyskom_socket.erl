@@ -1,3 +1,4 @@
+%% @hidden
 -module(elyskom_socket).
 
 -behaviour(gen_statem).

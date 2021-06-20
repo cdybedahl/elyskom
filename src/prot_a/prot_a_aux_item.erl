@@ -4,6 +4,24 @@
 -export([parse/1]).
 -export([encode/1]).
 
+-type t() :: #{
+    aux_no => pos_integer(),
+    tag => pos_integer(),
+    creator => pos_integer(),
+    created_at => prot_a_time:t(),
+    flags => prot_a_aux_item_flags:t(),
+    inherit_limit => pos_integer(),
+    data => unicode:unicode_binary()
+}.
+-type input() :: #{
+    tag => pos_integer(),
+    flags => prot_a_aux_item_flags:t(),
+    inherit_limit => pos_integer(),
+    data => unicode:unicode_binary()
+}.
+-export_type([t/0, input/0]).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse(List) ->
     {[AuxNo, Tag, Creator, CreatedAt, Flags, InheritLimit, Data], Tail} =
         prot_a_args:get(
@@ -31,6 +49,7 @@ parse(List) ->
         Tail
     }.
 
+-spec encode(input()) -> iodata().
 encode(#{tag := Tag, flags := Flags, inherit_limit := InheritLimit, data := Data}) ->
     iolist_to_binary(
         lists:join(<<" ">>, [

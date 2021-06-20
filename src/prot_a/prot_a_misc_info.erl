@@ -6,6 +6,21 @@
 -export([to_int/1]).
 -export([encode/1]).
 
+-type t() ::
+    {recpt, pos_integer()}
+    | {cc_recpt, pos_integer()}
+    | {bcc_recpt, pos_integer()}
+    | {comm_to, pos_integer()}
+    | {comm_in, pos_integer()}
+    | {footn_to, pos_integer()}
+    | {footn_in, pos_integer()}
+    | {loc_no, pos_integer()}
+    | {rec_time, prot_a_time:t()}
+    | {sent_by, pos_integer()}
+    | {sent_at, prot_a_time:t()}.
+-export_type([t/0]).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse([<<"0">>, Integer | Tail]) ->
     {{recpt, ?b2i(Integer)}, Tail};
 parse([<<"1">>, Integer | Tail]) ->
@@ -31,6 +46,7 @@ parse([<<"9">> | Tail]) ->
 parse([<<"15">>, Integer | Tail]) ->
     {{bcc_recpt, ?b2i(Integer)}, Tail}.
 
+-spec encode(t()) -> iodata().
 encode({Type, Payload}) ->
     EncodedType = to_int(Type),
     EncodedPayload = prot_a_integer:encode(Payload),

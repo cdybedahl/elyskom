@@ -2,6 +2,9 @@
 
 -export([to_atom/1]).
 
+-type t() :: {error, atom()}.
+-export_type([t/0]).
+
 to_atom(0) -> no_error;
 to_atom(2) -> not_implemented;
 to_atom(3) -> obsolete_call;

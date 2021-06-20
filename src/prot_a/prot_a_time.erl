@@ -5,6 +5,10 @@
 -export([encode/1]).
 -export([parse/1]).
 
+-type t() :: calendar:datetime().
+-export_type([t/0]).
+
+-spec encode(t()) -> iodata().
 encode({{Year, Month, Day}, {Hour, Minute, Second}}) ->
     [
         ?i2b(Second),
@@ -19,6 +23,7 @@ encode({{Year, Month, Day}, {Hour, Minute, Second}}) ->
         <<"1">>
     ].
 
+-spec parse([binary()]) -> {t(), [binary()]}.
 parse(List) ->
     {Args, Tail} = lists:split(9, List),
     [Sec, Min, Hour, Day, Mon, Year, _DoW, _DoY, _DST] =

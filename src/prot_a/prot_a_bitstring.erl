@@ -4,7 +4,12 @@
 -export([parse/1, parse/2]).
 -export([annotate/2]).
 
--spec encode([boolean()]) -> iodata().
+-type flagged_list() :: [{atom(), boolean()}].
+-type bitlist() :: [boolean()].
+
+-export_type([flagged_list/0, bitlist/0]).
+
+-spec encode(bitlist()) -> iodata().
 encode(List) when is_list(List) ->
     erlang:iolist_to_binary(
         lists:map(
@@ -28,18 +33,18 @@ encode(Map, Flags) ->
     ),
     encode(BitList).
 
--spec parse([binary()]) -> {[boolean()], [binary()]}.
+-spec parse([binary()]) -> {bitlist(), [binary()]}.
 parse([Str | Tail]) ->
     L0 = erlang:binary_to_list(Str),
     L1 = lists:map(fun(I) -> I =:= $1 end, L0),
     {L1, Tail}.
 
--spec parse([binary()], [atom()]) -> {[{atom(), boolean()}], [binary()]}.
+-spec parse([binary()], [atom()]) -> {flagged_list(), [binary()]}.
 parse(List, Flags) ->
     {RawFlags, Tail} = parse(List),
     {annotate(Flags, RawFlags), Tail}.
 
--spec annotate([atom()], [boolean()]) -> [{atom(), boolean()}].
+-spec annotate([atom()], [boolean()]) -> flagged_list().
 annotate(Names, Bitstring) ->
     lists:zip(Names, Bitstring).
 
