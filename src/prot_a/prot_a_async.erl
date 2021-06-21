@@ -1,7 +1,5 @@
 -module(prot_a_async).
 
--include("elyskom.hrl").
-
 -export([parse/1]).
 
 parse(List) ->
@@ -10,6 +8,15 @@ parse(List) ->
 do_parse([<<"0">> | Tail]) ->
     [TextNo, TextStatOld] = prot_a_args:parse([prot_a_integer, prot_a_textstat_old], Tail),
     {async_new_text_old, TextNo, TextStatOld};
+do_parse([<<"1">> | Tail]) ->
+    [PersNo] = prot_a_args:parse([prot_a_integer], Tail),
+    {async_i_am_off, PersNo};
+do_parse([<<"2">> | Tail]) ->
+    [PersNo, ConfNo, What] = prot_a_args:parse([prot_a_integer, prot_a_integer, prot_a_string], Tail),
+    {async_i_am_on_obsolete, PersNo, ConfNo, What};
+do_parse([<<"5">> | Tail]) ->
+    [ConfNo, Old, New] = prot_a_args:parse([prot_a_integer, prot_a_string, prot_a_string], Tail),
+    {async_new_name, ConfNo, Old, New};
 do_parse([<<"6">> | Tail]) ->
     [PersNo, ConfNo, SessionNo, What, UName] =
         prot_a_args:parse(
@@ -19,15 +26,53 @@ do_parse([<<"6">> | Tail]) ->
     {async_i_am_on, PersNo, ConfNo, SessionNo, What, UName};
 do_parse([<<"7">>]) ->
     async_saving_database;
+do_parse([<<"8">> | Tail]) ->
+    [ConfNo] = prot_a_args:parse([prot_a_integer], Tail),
+    {async_leave_conf, ConfNo};
 do_parse([<<"9">> | Tail]) ->
     [PersNo, SessionNo] = prot_a_args:parse([prot_a_integer, prot_a_integer], Tail),
     {async_login, PersNo, SessionNo};
+do_parse([<<"10">> | Tail]) ->
+    [Sender, Message] = prot_a_args:parse([prot_a_integer, prot_a_string], Tail),
+    {async_broadcast, Sender, Message};
+do_parse([<<"11">>]) ->
+    {async_rejected_connection};
+do_parse([<<"12">> | Tail]) ->
+    [Recipient, Sender, Message] = prot_a_args:parse([prot_a_integer, prot_a_integer, prot_a_string], Tail),
+    {async_send_message, Recipient, Sender, Message};
 do_parse([<<"13">> | Tail]) ->
     [PersNo, SessionNo] = prot_a_args:parse([prot_a_integer, prot_a_integer], Tail),
     {async_logout, PersNo, SessionNo};
+do_parse([<<"14">> | Tail]) ->
+    [TextNo, TextStat] = prot_a_args:parse([prot_a_integer, prot_a_textstat], Tail),
+    {async_deleted_text, TextNo, TextStat};
 do_parse([<<"15">> | Tail]) ->
     [TextNo, TextStat] = prot_a_args:parse([prot_a_integer, prot_a_textstat], Tail),
     {async_new_text, TextNo, TextStat};
+do_parse([<<"16">> | Tail]) ->
+    [TextNo, ConfNo, Tyoe] = prot_a_args:parse([prot_a_integer, prot_a_integer, prot_a_info], Tail),
+    {async_new_recipient, TextNo, ConfNo, Tyoe};
+do_parse([<<"17">> | Tail]) ->
+    [TextNo, ConfNo, Tyoe] = prot_a_args:parse([prot_a_integer, prot_a_integer, prot_a_info], Tail),
+    {async_sub_recipient, TextNo, ConfNo, Tyoe};
+do_parse([<<"18">> | Tail]) ->
+    [PersNo, ConfNo] = prot_a_args:parse([prot_a_integer, prot_a_integer], Tail),
+    {async_new_membership, PersNo, ConfNo};
+do_parse([<<"19">> | Tail]) ->
+    [PersNo, OldUserArea, NewUserArea] = prot_a_args:parse([prot_a_integer, prot_a_integer, prot_a_integer], Tail),
+    {async_new_user_area, PersNo, OldUserArea, NewUserArea};
+do_parse([<<"20">> | Tail]) ->
+    [PersNo, OldPresentation, NewPresentation] = prot_a_args:parse(
+        [prot_a_integer, prot_a_integer, prot_a_integer],
+        Tail
+    ),
+    {async_new_presentation, PersNo, OldPresentation, NewPresentation};
+do_parse([<<"21">> | Tail]) ->
+    [ConfNo, OldMotd, NewMotd] = prot_a_args:parse([prot_a_integer, prot_a_integer, prot_a_integer], Tail),
+    {async_new_motd, ConfNo, OldMotd, NewMotd};
+do_parse([<<"22">> | Tail]) ->
+    [TextNo, Deleted, Added] = prot_a_args:parse([prot_a_integer, [prot_a_aux_item], [prot_a_aux_item]], Tail),
+    {async_text_aux_changed, TextNo, Deleted, Added};
 do_parse(List) ->
     {async_wtf_is_that, List}.
 
