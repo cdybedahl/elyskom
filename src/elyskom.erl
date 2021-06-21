@@ -463,7 +463,3 @@ get_boottime_info(Pid) -> gen_statem:call(Pid, [get_boottime_info]).
 
 -spec get_info(pid()) -> [integer() | [prot_a_aux_item:t()]].
 get_info(Pid) -> gen_statem:call(Pid, [get_info]).
-
-%% Missing calls
-
-%% get_info, no args, returns list of stuff
