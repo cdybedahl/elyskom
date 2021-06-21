@@ -19,7 +19,6 @@
 -export([add_recipient/4]).
 -export([create_text/4]).
 -export([create_anonymous_text/4]).
-
 -export([add_comment/3]).
 -export([add_footnote/3]).
 -export([change_conference/2]).
@@ -84,6 +83,19 @@
 -export([sub_recipient/3]).
 -export([unmark_text/2]).
 -export([who_am_i/1]).
+-export([first_unused_conf_no/1]).
+-export([first_unused_text_no/1]).
+-export([get_marks/1]).
+-export([get_version_info/1]).
+-export([logout/1]).
+-export([query_async/1]).
+-export([query_predefined_aux_items/1]).
+-export([sync_kom/1]).
+-export([user_active/1]).
+-export([get_stats_description/1]).
+-export([get_collate_table/1]).
+-export([get_boottime_info/1]).
+-export([get_info/1]).
 
 %% @equiv new("kom.lysator.liu.se", 4894)
 new() ->
@@ -412,3 +424,46 @@ unmark_text(Pid, TextNo) -> gen_statem:call(Pid, [unmark_text, TextNo]).
 
 -spec who_am_i(pid()) -> pos_integer() | prot_a_error:t().
 who_am_i(Pid) -> gen_statem:call(Pid, [who_am_i]).
+
+-spec first_unused_conf_no(pid()) -> pos_integer() | prot_a_error:t().
+first_unused_conf_no(Pid) -> gen_statem:call(Pid, [first_unused_conf_no]).
+
+-spec first_unused_text_no(pid()) -> pos_integer() | prot_a_error:t().
+first_unused_text_no(Pid) -> gen_statem:call(Pid, [first_unused_text_no]).
+
+-spec get_marks(pid()) -> [prot_a_mark:t()] | prot_a_error:t().
+get_marks(Pid) -> gen_statem:call(Pid, [get_marks]).
+
+-spec get_version_info(pid()) -> [pos_integer()] | prot_a_error:t().
+get_version_info(Pid) -> gen_statem:call(Pid, [get_version_info]).
+
+-spec logout(pid()) -> ok | prot_a_error:t().
+logout(Pid) -> gen_statem:call(Pid, [logout]).
+
+-spec query_async(pid()) -> [pos_integer()] | prot_a_error:t().
+query_async(Pid) -> gen_statem:call(Pid, [query_async]).
+
+-spec query_predefined_aux_items(pid()) -> [pos_integer()] | prot_a_error:t().
+query_predefined_aux_items(Pid) -> gen_statem:call(Pid, [query_predefined_aux_items]).
+
+-spec sync_kom(pid()) -> ok | prot_a_error:t().
+sync_kom(Pid) -> gen_statem:call(Pid, [sync_kom]).
+
+-spec user_active(pid()) -> ok | prot_a_error:t().
+user_active(Pid) -> gen_statem:call(Pid, [user_active]).
+
+-spec get_stats_description(pid()) -> prot_a_stats_description:t() | prot_a_error:t().
+get_stats_description(Pid) -> gen_statem:call(Pid, [get_stats_description]).
+
+-spec get_collate_table(pid()) -> prot_a_string:t().
+get_collate_table(Pid) -> gen_statem:call(Pid, [get_collate_table]).
+
+-spec get_boottime_info(pid()) -> [prot_a_time:t() | prot_a_string:t() | integer()].
+get_boottime_info(Pid) -> gen_statem:call(Pid, [get_boottime_info]).
+
+-spec get_info(pid()) -> [integer() | [prot_a_aux_item:t()]].
+get_info(Pid) -> gen_statem:call(Pid, [get_info]).
+
+%% Missing calls
+
+%% get_info, no args, returns list of stuff
