@@ -46,7 +46,8 @@ parse(List, Flags) ->
 
 -spec annotate([atom()], [boolean()]) -> flagged_list().
 annotate(Names, Bitstring) ->
-    lists:zip(Names, Bitstring).
+    {Use, _Drop} = lists:split(length(Bitstring), Names),
+    lists:zip(Use, Bitstring).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
