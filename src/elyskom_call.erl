@@ -350,18 +350,19 @@ response(get_uconf_stat, Args) ->
 response(get_conf_stat, Args) ->
     one_arg(prot_a_conference, Args);
 response(get_info, Args) ->
-    prot_a_args:parse(
-        [
-            prot_a_integer,
-            prot_a_integer,
-            prot_a_integer,
-            prot_a_integer,
-            prot_a_integer,
-            prot_a_integer,
-            [prot_a_aux_item]
-        ],
-        Args
-    );
+    {ok,
+        prot_a_args:parse(
+            [
+                prot_a_integer,
+                prot_a_integer,
+                prot_a_integer,
+                prot_a_integer,
+                prot_a_integer,
+                prot_a_integer,
+                [prot_a_aux_item]
+            ],
+            Args
+        )};
 response(get_marks, Args) ->
     one_arg([prot_a_mark], Args);
 response(get_members, Args) ->
@@ -371,13 +372,13 @@ response(get_membership, Args) ->
 response(get_person_stat, Args) ->
     one_arg(prot_a_person, Args);
 response(get_static_session_info, Args) ->
-    prot_a_args:parse([prot_a_string, prot_a_string, prot_a_string, prot_a_time], Args);
+    {ok, prot_a_args:parse([prot_a_string, prot_a_string, prot_a_string, prot_a_time], Args)};
 response(get_stats, Args) ->
     one_arg([prot_a_stats], Args);
 response(get_stats_description, Args) ->
     one_arg(prot_a_stats_description, Args);
 response(get_version_info, Args) ->
-    prot_a_args:parse([prot_a_integer, prot_a_string, prot_a_string], Args);
+    {ok, prot_a_args:parse([prot_a_integer, prot_a_string, prot_a_string], Args)};
 response(local_to_global, Args) ->
     one_arg([prot_a_text_mapping], Args);
 response(local_to_global_reverse, Args) ->
@@ -389,26 +390,27 @@ response(map_created_texts_reverse, Args) ->
 response(query_read_texts, Args) ->
     one_arg([prot_a_membership], Args);
 response(get_boottime_info, Args) ->
-    prot_a_args:parse(
-        [
-            prot_a_time,
-            prot_a_time,
-            prot_a_string,
-            prot_a_integer,
-            prot_a_integer,
-            prot_a_integer,
-            prot_a_integer,
-            prot_a_integer
-        ],
-        Args
-    );
+    {ok,
+        prot_a_args:parse(
+            [
+                prot_a_time,
+                prot_a_time,
+                prot_a_string,
+                prot_a_integer,
+                prot_a_integer,
+                prot_a_integer,
+                prot_a_integer,
+                prot_a_integer
+            ],
+            Args
+        )};
 response(_CallName, []) ->
     ok.
 
 %%% Helpers
 one_arg(Type, List) ->
     [Arg] = prot_a_args:parse([Type], List),
-    Arg.
+    {ok, Arg}.
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").
