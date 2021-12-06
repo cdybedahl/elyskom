@@ -5,7 +5,8 @@
 
 -include("elyskom.hrl").
 
--export([new/0, new/1, new/2]).
+-export([start_link/0, start_link/1, start_link/2]).
+-export([start/0, start/1, start/2]).
 -export([login/3, login/4]).
 -export([accept_async/2]).
 -export([get_uconf_stat/2]).
@@ -97,21 +98,43 @@
 -export([get_boottime_info/1]).
 -export([get_info/1]).
 
-%% @equiv new("kom.lysator.liu.se", 4894)
-new() ->
-    new("kom.lysator.liu.se", ?TCP_PORT).
+%% @equiv start_link("kom.lysator.liu.se", 4894)
+start_link() ->
+    start_link("kom.lysator.liu.se", ?TCP_PORT).
 
-%% @equiv new(Host, 4894)
-new(Host) ->
-    new(Host, ?TCP_PORT).
+%% @equiv start_link(Host, 4894)
+start_link(Host) ->
+    start_link(Host, ?TCP_PORT).
 
 %% @doc Connect to the LysKOM server at the given host and port.
 %% If it takes more than ten seconds to connect to the server and
 %% establish communication, the connection will be broken and a
 %% timeout error returned.
--spec new(inet:hostname() | inet:hostent(), pos_integer()) -> {ok, pid()} | {error, timeout}.
-new(Host, TcpPort) ->
+-spec start_link(inet:hostname() | inet:hostent(), pos_integer()) -> {ok, pid()} | {error, timeout}.
+start_link(Host, TcpPort) ->
     {ok, Pid} = elyskom_socket:start_link(Host, TcpPort),
+    receive
+        {elyskom, Pid, connected} -> {ok, Pid}
+    after 10000 ->
+        gen_statem:stop(Pid),
+        {error, timeout}
+    end.
+
+%% @equiv start_link("kom.lysator.liu.se", 4894)
+start() ->
+    start("kom.lysator.liu.se", ?TCP_PORT).
+
+%% @equiv start_link(Host, 4894)
+start(Host) ->
+    start(Host, ?TCP_PORT).
+
+%% @doc Connect to the LysKOM server at the given host and port.
+%% If it takes more than ten seconds to connect to the server and
+%% establish communication, the connection will be broken and a
+%% timeout error returned.
+-spec start(inet:hostname() | inet:hostent(), pos_integer()) -> {ok, pid()} | {error, timeout}.
+start(Host, TcpPort) ->
+    {ok, Pid} = elyskom_socket:start(Host, TcpPort),
     receive
         {elyskom, Pid, connected} -> {ok, Pid}
     after 10000 ->

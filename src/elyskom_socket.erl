@@ -6,6 +6,7 @@
 -export([callback_mode/0]).
 -export([init/1]).
 -export([start_link/2]).
+-export([start/2]).
 -export([connecting/3]).
 -export([handshake/3]).
 -export([waiting/3]).
@@ -35,6 +36,9 @@ callback_mode() ->
 
 start_link(Host, TcpPort) ->
     gen_statem:start_link(?MODULE, {Host, TcpPort, self()}, []).
+
+start(Host, TcpPort) ->
+    gen_statem:start(?MODULE, {Host, TcpPort, self()}, []).
 
 init({Host, TcpPort, Peer}) ->
     Data = ?INITIAL_DATA,
