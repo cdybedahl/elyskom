@@ -93,7 +93,7 @@ token(internal, tokenize, #{stream_acc := Stream} = Data) ->
     case Stream of
         <<32, Rest/binary>> ->
             NewData1 = add_token(maps:get(token_acc, Data), Data),
-            {next_state, token, NewData1#{token_acc := <<>>, stream_acc := Rest}, [
+            {keep_state, NewData1#{token_acc := <<>>, stream_acc := Rest}, [
                 {next_event, internal, tokenize}
             ]};
         <<10, Rest/binary>> ->
@@ -109,7 +109,7 @@ token(internal, tokenize, #{stream_acc := Stream} = Data) ->
         <<$H, Rest/binary>> ->
             {next_state, hollerith, Data#{stream_acc := Rest}, [{next_event, internal, tokenize}]};
         <<Char:8, Rest/binary>> ->
-            {next_state, token,
+            {keep_state,
                 Data#{
                     stream_acc := Rest,
                     token_acc := <<(maps:get(token_acc, Data))/binary, Char>>

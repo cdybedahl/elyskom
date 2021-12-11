@@ -1,6 +1,7 @@
 -module(prot_a_membership_type).
 
 -export([encode/1]).
+-export([parse/1]).
 
 -define(FLAGS, [
     invitation,
@@ -27,6 +28,9 @@
 
 -spec encode(t()) -> iodata().
 encode(Map) -> prot_a_bitstring:encode(Map, ?FLAGS).
+
+-spec parse([binary()]) -> {t(), [binary()]}.
+parse(List) -> prot_a_bitstring:parse(List, ?FLAGS).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").

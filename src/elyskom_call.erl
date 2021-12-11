@@ -388,7 +388,7 @@ response(map_created_texts, Args) ->
 response(map_created_texts_reverse, Args) ->
     one_arg([prot_a_text_mapping], Args);
 response(query_read_texts, Args) ->
-    one_arg([prot_a_membership], Args);
+    one_arg(prot_a_membership, Args);
 response(get_boottime_info, Args) ->
     {ok,
         prot_a_args:parse(
