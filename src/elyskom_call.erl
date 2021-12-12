@@ -368,7 +368,7 @@ response(get_marks, Args) ->
 response(get_members, Args) ->
     one_arg([prot_a_member], Args);
 response(get_membership, Args) ->
-    one_arg(prot_a_membership, Args);
+    one_arg([prot_a_membership], Args);
 response(get_person_stat, Args) ->
     one_arg(prot_a_person, Args);
 response(get_static_session_info, Args) ->
