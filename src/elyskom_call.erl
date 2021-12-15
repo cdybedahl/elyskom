@@ -380,9 +380,9 @@ response(get_stats_description, Args) ->
 response(get_version_info, Args) ->
     {ok, prot_a_args:parse([prot_a_integer, prot_a_string, prot_a_string], Args)};
 response(local_to_global, Args) ->
-    one_arg([prot_a_text_mapping], Args);
+    one_arg(prot_a_text_mapping, Args);
 response(local_to_global_reverse, Args) ->
-    one_arg([prot_a_text_mapping], Args);
+    one_arg(prot_a_text_mapping, Args);
 response(map_created_texts, Args) ->
     one_arg([prot_a_text_mapping], Args);
 response(map_created_texts_reverse, Args) ->
