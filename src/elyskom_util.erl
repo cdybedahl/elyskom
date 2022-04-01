@@ -2,6 +2,7 @@
 
 -export([text/2]).
 -export([unread/2]).
+-export([invert_read_list/1]).
 
 text(Pid, TextNo) ->
     {ok, TS} = elyskom:get_text_stat(Pid, TextNo),
@@ -19,7 +20,7 @@ unread(Pid, UserId) ->
     {ok, ConfList} = elyskom:get_unread_confs(Pid, UserId),
     List = lists:map(
         fun(C) ->
-            {ok, M} = elyskom:query_read_texts(Pid, UserId, C, true, 0),
+            {ok, M} = elyskom:query_read_texts(Pid, UserId, C, true, 1),
             {ok, UC} = elyskom:get_uconf_stat(Pid, C),
             unread_list(Pid, C, M, UC)
         end,
@@ -69,3 +70,13 @@ maybe_extend(Pid, ConfNo, #{
         ConfNo,
         NewRes#{block := Block ++ NewBlock, range_begin := Begin}
     ).
+
+invert_read_list(List) ->
+    invert_read_list(List, []).
+
+invert_read_list([], Acc) ->
+    lists:reverse(Acc);
+invert_read_list([{_M, _N}], Acc) ->
+    invert_read_list([], Acc);
+invert_read_list([{_, M}, {N, _} = Next | Tail], Acc) ->
+    invert_read_list([Next | Tail], [{M + 1, N - 1} | Acc]).
