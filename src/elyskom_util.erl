@@ -2,7 +2,7 @@
 
 -export([text/2]).
 -export([unread/2]).
--export([invert_read_list/1]).
+-export([local_to_global/3]).
 
 text(Pid, TextNo) ->
     {ok, TS} = elyskom:get_text_stat(Pid, TextNo),
@@ -18,58 +18,48 @@ text(Pid, TextNo) ->
 
 unread(Pid, UserId) ->
     {ok, ConfList} = elyskom:get_unread_confs(Pid, UserId),
-    List = lists:map(
-        fun(C) ->
-            {ok, M} = elyskom:query_read_texts(Pid, UserId, C, true, 1),
-            {ok, UC} = elyskom:get_uconf_stat(Pid, C),
-            unread_list(Pid, C, M, UC)
-        end,
-        ConfList
-    ),
+    List = lists:map(fun(C) -> unread_in_conf(Pid, UserId, C) end, ConfList),
     List.
 
-unread_list(Pid, ConfNo, Membership, #{highest_local_no := HighestLocal}) ->
-    LastRead = last_text_read(Membership),
-    case LastRead < HighestLocal of
-        false ->
-            [];
-        true ->
-            {ok, Res0} = elyskom:local_to_global(Pid, ConfNo, LastRead, 255),
-            Res = maybe_extend(Pid, ConfNo, Res0),
-            {ConfNo, Res}
+unread_in_conf(Pid, UserId, ConfNo) ->
+    {ok, #{highest_local_no := HighestLocalNo}} = elyskom:get_uconf_stat(Pid, ConfNo),
+    {ok, #{read_ranges := ReadRanges0}} = elyskom:query_read_texts(Pid, UserId, ConfNo, true, 0),
+    ReadRanges =
+        case lists:last(ReadRanges0) of
+            {_, HighestLocalNo} ->
+                ReadRanges0;
+            _ ->
+                ReadRanges0 ++ [{HighestLocalNo + 1, HighestLocalNo + 1}]
+        end,
+    UnreadRanges = invert_read_list(ReadRanges),
+    UnreadList = lists:flatten(lists:map(fun({Low, High}) -> lists:seq(Low, High) end, UnreadRanges)),
+    Span = lists:last(UnreadList) - hd(UnreadList),
+    #{ConfNo => {Span, UnreadList}}.
+
+local_to_global(Pid, ConfNo, LocalNo) ->
+    Cache = elyskom_socket:get_l2g_cache(Pid),
+    case ets:lookup(Cache, {ConfNo, LocalNo}) of
+        [{{ConfNo, LocalNo}, GlobalNo}] ->
+            GlobalNo;
+        [] ->
+            {ok, Mapping} = elyskom:local_to_global(Pid, ConfNo, LocalNo, 255),
+            cache_block(Pid, ConfNo, Mapping),
+            [{{ConfNo, LocalNo}, GlobalNo}] = ets:lookup(Cache, {ConfNo, LocalNo}),
+            GlobalNo
     end.
 
-last_text_read(#{read_ranges := []}) ->
-    1;
-last_text_read(#{read_ranges := Ranges}) ->
-    lists:foldl(
-        fun({_, H}, Acc) ->
-            case H > Acc of
-                true -> H;
-                false -> Acc
-            end
-        end,
-        1,
-        Ranges
-    ).
+%%%
+%%% Internal functions
+%%%
 
-maybe_extend(_Pid, _ConfNo, #{more_texts_exist := false} = Res) ->
-    Res;
-maybe_extend(_Pid, _ConfNo, #{block := Block} = Res) when length(Block) >= 1000 ->
-    Res;
-maybe_extend(Pid, ConfNo, #{
-    more_texts_exist := true,
-    range_begin := Begin,
-    range_end := End,
-    block := Block
-}) ->
-    {ok, #{block := NewBlock} = NewRes} =
-        elyskom:local_to_global(Pid, ConfNo, End, 255),
-    maybe_extend(
-        Pid,
-        ConfNo,
-        NewRes#{block := Block ++ NewBlock, range_begin := Begin}
-    ).
+cache_block(Pid, ConfNo, #{block := Block, range_begin := Start, range_end := End}) ->
+    Cache = elyskom_socket:get_l2g_cache(Pid),
+    Exists = lists:map(fun({Local, Global}) -> {{ConfNo, Local}, Global} end, Block),
+    ets:insert(Cache, Exists),
+    Locals = lists:map(fun({Local, _}) -> Local end, Block),
+    NonExistent = lists:seq(Start, End - 1) -- Locals,
+    NonExistentBlock = lists:map(fun(L) -> {{ConfNo, L}, undefined} end, NonExistent),
+    ets:insert(Cache, NonExistentBlock).
 
 invert_read_list(List) ->
     invert_read_list(List, []).
@@ -78,5 +68,5 @@ invert_read_list([], Acc) ->
     lists:reverse(Acc);
 invert_read_list([{_M, _N}], Acc) ->
     invert_read_list([], Acc);
-invert_read_list([{_, M}, {N, _} = Next | Tail], Acc) ->
+invert_read_list([{_, M}, {N, _} = Next | Tail], Acc) when N - M > 0 ->
     invert_read_list([Next | Tail], [{M + 1, N - 1} | Acc]).
