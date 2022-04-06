@@ -4,6 +4,8 @@
 -export([unread/2]).
 -export([local_to_global/3]).
 
+-define(UNREAD_LIMIT, 1000).
+
 text(Pid, TextNo) ->
     {ok, TS} = elyskom:get_text_stat(Pid, TextNo),
     #{no_of_chars := Size, aux_item := AuxItems} = TS,
@@ -18,7 +20,7 @@ text(Pid, TextNo) ->
 
 unread(Pid, UserId) ->
     {ok, ConfList} = elyskom:get_unread_confs(Pid, UserId),
-    List = lists:map(fun(C) -> unread_in_conf(Pid, UserId, C) end, ConfList),
+    List = lists:map(fun(C) -> {C, unread_in_conf(Pid, UserId, C)} end, ConfList),
     List.
 
 unread_in_conf(Pid, UserId, ConfNo) ->
@@ -33,8 +35,15 @@ unread_in_conf(Pid, UserId, ConfNo) ->
         end,
     UnreadRanges = invert_read_list(ReadRanges),
     UnreadList = lists:flatten(lists:map(fun({Low, High}) -> lists:seq(Low, High) end, UnreadRanges)),
-    Span = lists:last(UnreadList) - hd(UnreadList),
-    #{ConfNo => {Span, UnreadList}}.
+    case length(UnreadList) > ?UNREAD_LIMIT of
+        false ->
+            UL = lists:map(fun(L) -> {L, local_to_global(Pid, ConfNo, L)} end, UnreadList),
+            {full, UL, 0};
+        true ->
+            {First, Rest} = lists:split(?UNREAD_LIMIT, UnreadList),
+            FL = lists:map(fun(L) -> {L, local_to_global(Pid, ConfNo, L)} end, First),
+            {partial, FL, length(Rest)}
+    end.
 
 local_to_global(Pid, ConfNo, LocalNo) ->
     Cache = elyskom_socket:get_l2g_cache(Pid),
