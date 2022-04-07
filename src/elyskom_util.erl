@@ -2,6 +2,7 @@
 
 -export([text/2]).
 -export([unread/2]).
+-export([unread_in_conf/3]).
 -export([local_to_global/3]).
 
 -define(UNREAD_LIMIT, 1000).
@@ -26,15 +27,7 @@ unread(Pid, UserId) ->
 unread_in_conf(Pid, UserId, ConfNo) ->
     {ok, #{highest_local_no := HighestLocalNo}} = elyskom:get_uconf_stat(Pid, ConfNo),
     {ok, #{read_ranges := ReadRanges0}} = elyskom:query_read_texts(Pid, UserId, ConfNo, true, 0),
-    ReadRanges =
-        case lists:last(ReadRanges0) of
-            {_, HighestLocalNo} ->
-                ReadRanges0;
-            _ ->
-                ReadRanges0 ++ [{HighestLocalNo + 1, HighestLocalNo + 1}]
-        end,
-    UnreadRanges = invert_read_list(ReadRanges),
-    UnreadList = lists:flatten(lists:map(fun({Low, High}) -> lists:seq(Low, High) end, UnreadRanges)),
+    UnreadList = get_unread_list(Pid, ConfNo, ReadRanges0, HighestLocalNo),
     case length(UnreadList) > ?UNREAD_LIMIT of
         false ->
             UL = lists:map(fun(L) -> {L, local_to_global(Pid, ConfNo, L)} end, UnreadList),
@@ -60,6 +53,20 @@ local_to_global(Pid, ConfNo, LocalNo) ->
 %%%
 %%% Internal functions
 %%%
+
+get_unread_list(Pid, ConfNo, [], HighestLocalNo) ->
+    {ok, #{first_local_no := FirstLocalNo}} = elyskom:get_conf_stat(Pid, ConfNo),
+    lists:seq(FirstLocalNo, HighestLocalNo);
+get_unread_list(_Pid, _ConfNo, ReadRanges0, HighestLocalNo) ->
+    ReadRanges =
+        case lists:last(ReadRanges0) of
+            {_, HighestLocalNo} ->
+                ReadRanges0;
+            _ ->
+                ReadRanges0 ++ [{HighestLocalNo + 1, HighestLocalNo + 1}]
+        end,
+    UnreadRanges = invert_read_list(ReadRanges),
+    lists:flatten(lists:map(fun({Low, High}) -> lists:seq(Low, High) end, UnreadRanges)).
 
 cache_block(Pid, ConfNo, #{block := Block, range_begin := Start, range_end := End}) ->
     Cache = elyskom_socket:get_l2g_cache(Pid),
