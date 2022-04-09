@@ -28,15 +28,23 @@ unread_in_conf(Pid, UserId, ConfNo) ->
     {ok, #{highest_local_no := HighestLocalNo}} = elyskom:get_uconf_stat(Pid, ConfNo),
     {ok, #{read_ranges := ReadRanges0}} = elyskom:query_read_texts(Pid, UserId, ConfNo, true, 0),
     UnreadList = get_unread_list(Pid, ConfNo, ReadRanges0, HighestLocalNo),
-    case length(UnreadList) > ?UNREAD_LIMIT of
-        false ->
-            UL = lists:map(fun(L) -> {L, local_to_global(Pid, ConfNo, L)} end, UnreadList),
-            {full, UL, 0};
-        true ->
-            {First, Rest} = lists:split(?UNREAD_LIMIT, UnreadList),
-            FL = lists:map(fun(L) -> {L, local_to_global(Pid, ConfNo, L)} end, First),
-            {partial, FL, length(Rest)}
-    end.
+    {Count, With, Without} =
+        lists:foldl(
+            fun
+                (_LocalNo, {Count, WithGlobal, JustLocal}) when Count >= ?UNREAD_LIMIT ->
+                    {Count, WithGlobal, JustLocal + 1};
+                (LocalNo, {Count, WithGlobal, JustLocal}) ->
+                    case local_to_global(Pid, ConfNo, LocalNo) of
+                        undefined ->
+                            {Count, WithGlobal, JustLocal};
+                        N ->
+                            {Count + 1, [{LocalNo, N} | WithGlobal], JustLocal}
+                    end
+            end,
+            {0, [], 0},
+            UnreadList
+        ),
+    {Count, lists:reverse(With), Without}.
 
 local_to_global(Pid, ConfNo, LocalNo) ->
     Cache = elyskom_socket:get_l2g_cache(Pid),
