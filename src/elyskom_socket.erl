@@ -65,7 +65,6 @@ connecting(_Type, startup, #{delay := Delay, hostname := Host, tcp_port := TcpPo
     case gen_tcp:connect(Host, TcpPort, [binary, inet, {active, once}]) of
         {ok, Port} ->
             gen_tcp:send(Port, <<"A7Helyskom\n">>),
-            logger:debug("TCP connection established."),
             {next_state, handshake, Data#{port := Port}};
         _ ->
             NewDelay = erlang:min(300, 2 * Delay),
@@ -172,7 +171,6 @@ handle_common(
 handle_common(info, {tcp, Port, Payload}, _Function, #{port := Port} = Data) ->
     inet:setopts(Port, [{active, once}]),
     NewData = append_to_stream(Payload, Data),
-    logger:debug("Incoming data: ~p", [NewData]),
     {keep_state, NewData, [{next_event, internal, tokenize}]};
 handle_common(
     info,
