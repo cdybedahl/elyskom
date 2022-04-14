@@ -26,7 +26,7 @@ text(Pid, TextNo) ->
 
 unread(Pid, UserId) ->
     {ok, ConfList} = elyskom:get_unread_confs(Pid, UserId),
-    List = lists:map(fun(C) -> {C, unread_in_conf(Pid, UserId, C)} end, ConfList),
+    List = lists:map(fun(C) -> unread_in_conf(Pid, UserId, C) end, ConfList),
     List.
 
 unread_in_conf(Pid, UserId, ConfNo) ->
@@ -49,7 +49,7 @@ unread_in_conf(Pid, UserId, ConfNo) ->
             {0, [], 0},
             UnreadList
         ),
-    {Count, lists:reverse(With), Without}.
+    #{count => Count, with => lists:reverse(With), without => Without, conf_no => ConfNo}.
 
 local_to_global(Pid, ConfNo, LocalNo) ->
     Cache = elyskom_socket:get_l2g_cache(Pid),
