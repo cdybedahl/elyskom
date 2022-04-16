@@ -13,6 +13,7 @@
 -export([token/3]).
 -export([hollerith/3]).
 -export([get_l2g_cache/1]).
+-export([get_name_cache/1]).
 
 -define(INITIAL_DATA, #{
     delay => 1,
@@ -25,7 +26,8 @@
     pending => null,
     call_counter => 1,
     peer => null,
-    l2g_cache => undefined
+    l2g_cache => undefined,
+    name_cache => undefined
 }).
 
 -define(HANDLE_COMMON,
@@ -35,6 +37,9 @@
 
 get_l2g_cache(Pid) ->
     gen_statem:call(Pid, get_l2c_cache).
+
+get_name_cache(Pid) ->
+    gen_statem:call(Pid, get_name_cache).
 
 callback_mode() ->
     state_functions.
@@ -49,13 +54,15 @@ init({Host, TcpPort, Peer}) ->
     Data = ?INITIAL_DATA,
     Pending = ets:new(pending, [set, private]),
     L2G_cache = ets:new(l2g_cache, [set, public]),
+    NameCache = ets:new(name_cache, [set, public]),
     {ok, connecting,
         Data#{
             hostname := Host,
             tcp_port := TcpPort,
             pending := Pending,
             peer := Peer,
-            l2g_cache := L2G_cache
+            l2g_cache := L2G_cache,
+            name_cache := NameCache
         },
         [
             {next_event, internal, startup}
@@ -155,6 +162,8 @@ hollerith(internal, tokenize, #{token_acc := Length, stream_acc := Stream} = Dat
 %% Common to all states
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 handle_common({call, From}, get_l2c_cache, _Function, #{l2g_cache := CacheId}) ->
+    {keep_state_and_data, [{reply, From, CacheId}]};
+handle_common({call, From}, get_name_cache, _Function, #{name_cache := CacheId}) ->
     {keep_state_and_data, [{reply, From, CacheId}]};
 handle_common(
     {call, From},

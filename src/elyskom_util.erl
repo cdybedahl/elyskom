@@ -4,6 +4,7 @@
 -export([unread/2]).
 -export([unread_in_conf/3]).
 -export([local_to_global/3]).
+-export([name/2]).
 
 -define(UNREAD_LIMIT, 1000).
 
@@ -63,9 +64,31 @@ local_to_global(Pid, ConfNo, LocalNo) ->
             GlobalNo
     end.
 
+name(Pid, ConfNo) ->
+    Cache = elyskom_socket:get_name_cache(Pid),
+    Now = erlang:monotonic_time(),
+    case ets:lookup(Cache, ConfNo) of
+        [{ConfNo, Name, Time}] when Now - Time < 300_000_000_000 ->
+            Name;
+        [{_ConfNo, _Name, _Time}] ->
+            get_and_store_name(Pid, Cache, ConfNo);
+        [] ->
+            get_and_store_name(Pid, Cache, ConfNo)
+    end.
+
 %%%
 %%% Internal functions
 %%%
+
+get_and_store_name(Pid, Cache, ConfNo) ->
+    case elyskom:get_uconf_stat(Pid, ConfNo) of
+        {ok, #{name := Name}} ->
+            ets:insert(Cache, {ConfNo, Name, erlang:monotonic_time()}),
+            Name;
+        {error, _, _} ->
+            No = erlang:integer_to_binary(ConfNo),
+            <<"no such conference #", No/binary>>
+    end.
 
 get_unread_list(Pid, ConfNo, [], HighestLocalNo) ->
     {ok, #{first_local_no := FirstLocalNo}} = elyskom:get_conf_stat(Pid, ConfNo),
