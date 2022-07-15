@@ -8,6 +8,9 @@
 
 -define(UNREAD_LIMIT, 1000).
 
+% @doc Fetch both the text status and the text itself for the given global text
+% number from the connected server. Also splits off the subject line from the
+% body, and makes a reasonable attempt to turn the body into UTF-8.
 text(Pid, TextNo) ->
     {ok, TS} = elyskom:get_text_stat(Pid, TextNo),
     #{no_of_chars := Size, aux_item := AuxItems} = TS,
@@ -25,11 +28,22 @@ text(Pid, TextNo) ->
     [Subject, Body] = binary:split(Text, <<"\n">>),
     TS#{subject => Subject, body => Body}.
 
+% @doc Return the unread texts for the given user in the connected server. The
+% unreads are returned as a list of hashes. Each hash has four keys. `conf_no'
+% holds the conference number. `count' holds a count of unread texts the
+% definitely exist. `with' holds a list of two-tuples, where the first element
+% is a local text number and the second the corresponding global number. The
+% number of items in this list is the same as `count'. The `without' key has a
+% list with only local numbers, some of which may no longer exist. The reason
+% for this splitting is to make it reasonably fast to fetch the unread list even
+% for users with very large numbers of potentially unread texts (as in millions
+% of them).
 unread(Pid, UserId) ->
     {ok, ConfList} = elyskom:get_unread_confs(Pid, UserId),
     List = lists:map(fun(C) -> unread_in_conf(Pid, UserId, C) end, ConfList),
     List.
 
+% @doc Return the unread hash (as described above) for a specific conference.
 unread_in_conf(Pid, UserId, ConfNo) ->
     {ok, #{highest_local_no := HighestLocalNo}} = elyskom:get_uconf_stat(Pid, ConfNo),
     {ok, #{read_ranges := ReadRanges0}} = elyskom:query_read_texts(Pid, UserId, ConfNo, true, 0),
@@ -52,6 +66,9 @@ unread_in_conf(Pid, UserId, ConfNo) ->
         ),
     #{count => Count, with => lists:reverse(With), without => Without, conf_no => ConfNo}.
 
+% @doc Returns the global text number for the given local text number in the
+% given conference on the connected server, or the atom `undefined' if the text
+% no longer exists.
 local_to_global(Pid, ConfNo, LocalNo) ->
     Cache = elyskom_socket:get_l2g_cache(Pid),
     case ets:lookup(Cache, {ConfNo, LocalNo}) of
@@ -64,6 +81,8 @@ local_to_global(Pid, ConfNo, LocalNo) ->
             GlobalNo
     end.
 
+% @doc Returns the name of the a given conference (or person) from the connected
+% server. Caches the name locally for five minutes.
 name(Pid, ConfNo) ->
     Cache = elyskom_socket:get_name_cache(Pid),
     Now = erlang:monotonic_time(),
