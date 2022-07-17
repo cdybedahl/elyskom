@@ -4,7 +4,7 @@
 
 -include("elyskom.hrl").
 
--type block() :: {sparse, [prot_a_pair:t()]} | {dense, {pos_integer(), [pos_integer()]}}.
+-type block() :: [prot_a_pair:t()].
 -type t() ::
     #{range_begin => pos_integer(), range_end => pos_integer(), more_texts_exist => boolean(), block => block()}.
 -export_type([t/0, block/0]).

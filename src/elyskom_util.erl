@@ -104,7 +104,7 @@ get_and_store_name(Pid, Cache, ConfNo) ->
         {ok, #{name := Name}} ->
             ets:insert(Cache, {ConfNo, Name, erlang:monotonic_time()}),
             Name;
-        {error, _, _} ->
+        {error, _} ->
             No = erlang:integer_to_binary(ConfNo),
             <<"no such conference #", No/binary>>
     end.

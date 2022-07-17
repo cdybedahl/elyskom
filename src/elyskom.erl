@@ -337,7 +337,7 @@ modify_system_info(Pid, ItemsToDelete, AuxItemsToAdd) ->
 modify_text_info(Pid, TextNo, ItemsToDelete, AuxItemsToAdd) ->
     gen_statem:call(Pid, [modify_text_info, TextNo, ItemsToDelete, AuxItemsToAdd]).
 
--spec query_read_texts(pid(), pos_integer(), pos_integer(), boolean(), pos_integer()) ->
+-spec query_read_texts(pid(), pos_integer(), pos_integer(), boolean(), non_neg_integer()) ->
     {ok, prot_a_membership:t()} | prot_a_error:t().
 query_read_texts(Pid, PersNo, ConfNo, WantReadRanges, MaxRanges) ->
     gen_statem:call(Pid, [query_read_texts, PersNo, ConfNo, WantReadRanges, MaxRanges]).

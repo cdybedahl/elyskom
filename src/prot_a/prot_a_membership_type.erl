@@ -29,7 +29,7 @@
 -spec encode(t()) -> iodata().
 encode(Map) -> prot_a_bitstring:encode(Map, ?FLAGS).
 
--spec parse([binary()]) -> {t(), [binary()]}.
+-spec parse([binary()]) -> {prot_a_bitstring:flagged_list(), [binary()]}.
 parse(List) -> prot_a_bitstring:parse(List, ?FLAGS).
 
 -ifdef(TEST).
