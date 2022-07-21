@@ -2,7 +2,7 @@
 
 -export([to_atom/1]).
 
--type t() :: {error, atom()}.
+-type t() :: {error, atom(), non_neg_integer()}.
 -export_type([t/0]).
 
 to_atom(0) -> no_error;
